@@ -1,0 +1,97 @@
+<div id="inviteresponse" ng-init="init()" ng-cloack>
+<div data-ng-show="retrievingData()">
+	<div class="page-header">
+		<h3>
+		Loading invite...
+		<i class="fa fa-spinner fa-spin"></i>
+		</h3>
+	</div>
+</div>
+<div data-ng-hide="retrievingData()">
+	<div class="page-header" data-ng-show="acceptingResponse == false && rejectingResponse == false">
+		<h3>{{retrievingData}} Invite response for '{{invite.description}}' - Binding VM '{{invite.serviceName}}'</h3>
+	</div>
+	<div class="page-header" data-ng-show="acceptingResponse == true">
+		<h3>Accepting invite response for '{{invite.description}}' - Binding VM '{{invite.serviceName}}' <i class="fa fa-spinner fa-spin"></i>
+		</h3>
+	</div>
+	<div class="page-header" data-ng-show="rejectingResponse == true">
+		<h3>Rejecting invite response for '{{invite.description}}' - Binding VM '{{invite.serviceName}}' <i class="fa fa-spinner fa-spin"></i>
+		</h3>
+	</div>
+	<div class="row">
+		<div ng-include src="'assets/templates/status.html'"></div>
+	</div>
+	<div layout="column" ng-cloak class="md-inline-form" ng-show="invite.status == 'PENDING'">
+	<div><b>Please enter the mandatory fields and <i>accept</i> the invite or <i>reject</i> it.</b></div>
+  <md-content layout-padding>
+    <div>
+      <form name="userForm" ng-submit="acceptInvite()">
+        <div layout-gt-sm="row">
+          <md-input-container class="md-block" flex-gt-sm>
+            <label for="organization">Organization</label>
+            <md-select id="organization" name="organization" required ng-model="organization" ng-change="onOrgChange()">
+            	<md-optgroup label="Organization(s) you have access to">
+            		<md-option ng-repeat="org in treeorg | orderBy : 'orgname'" value="{{org.orguuid}}">{{org.orgname}}</option>
+            	</md-option>
+          	</md-select>
+          </md-input-container>
+          <md-input-container class="md-block" flex-gt-sm>
+            <label for="space">Space</label>
+            <md-select id="space" name="space" required ng-model="space" ng-change="onSpaceChange()">
+            	<md-optgroup label="Related space(s) for {{currentOrg}}">
+            		<md-option ng-repeat="space in relatedspaces | orderBy : 'spacename'" value="{{space.spaceuuid}}">{{space.spacename}}</option>
+            	</md-option>
+          	</md-select>
+          </md-input-container>
+        </div>
+        <div layout-gt-sm="row">
+        <table width="100%">
+        <tr>
+        <td width="50%">
+          <md-input-container class="md-block" flex-gt-sm>
+            <label for="space">Host</label>
+            <md-select id="host" name="host" required ng-model="host">
+            	<md-optgroup label="Related host(s) for {{currentSpace}}">
+            		<md-option ng-repeat="host in relatedhosts" value="{{host}}">{{host}}</option>
+            	</md-option>
+          	</md-select>
+          </md-input-container>
+          </td>
+          <td>
+          <md-content>
+          <label>Port is set to {{invite.port}}</label>
+          </md-content>
+          </td>
+          <tr>
+        </table>
+        </div>
+        <div class="row">
+        	<div class="col-md-2">
+				<button ng-disabled="userForm.$invalid || buttonsDisabled()" type="submit" class="btn btn-success btn-lg btn-block">
+			      <span class="glyphicon glyphicon-ok"></span> Accept
+					<span data-ng-show="acceptingResponse">
+						<i class="fa fa-spinner fa-spin"></i>
+					</span>
+			    </button>
+			 </div>
+		</div>
+      </form>
+      <br/>
+        <div class="row">
+       	<div class="col-md-2">
+				<button ng-disabled="userForm.$invalid || buttonsDisabled()" confirm="Rejecting invite ?" ng-click="rejectInvite()" class="btn btn-danger btn-lg btn-block">
+					<span class="glyphicon glyphicon-remove"></span> Reject
+					<span data-ng-show="rejectingResponse">
+						<i class="fa fa-spinner fa-spin"></i>
+					</span>
+			    </button>
+			 </div>
+		</div>
+    </div>
+  </md-content>
+</div>
+<div>
+</div>
+
+</div>

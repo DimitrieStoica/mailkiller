@@ -1,0 +1,32 @@
+<div class="panel panel-info"
+	ng-show="vmDetails.vroStatus == 'PROVISIONED'">
+	<div class="panel-heading">Virtual machine operations</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-md-12">
+				<h4>Assign site</h4>
+			</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-md-12">Assign site will assign the virtual
+				machine to a site, which is comparable with an availability zone.
+			</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-md-12">
+				<form name="assignSiteForm" novalidate class="form-inline">
+					<div class="form-group top10">
+						<select class="form-control width160"
+							ng-model="vmDetails.assignedSite">
+							<option value="NOT_ASSIGNED">Not assigned</option>
+							<option value="{{site.key}}" ng-repeat="site in availableSites">{{site.displayName}}</option>
+						</select>
+						<button type="button" class="btn btn-danger"
+							ng-click="assignSite(vmDetails.assignedSite)"
+							ng-disabled="vmDetails.assignedSite == 'NOT_ASSIGNED'">Assign</button>
+					</div>
+				</form>
+			</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-md-12">&nbsp;</div>
+		</div>
+	</div>
+</div>

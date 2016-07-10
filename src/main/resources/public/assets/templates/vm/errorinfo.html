@@ -1,0 +1,31 @@
+		<div class="panel panel-danger"
+			ng-show="vmDetails.vroStatus == 'FAILED' || vmDetails.vroStatus == 'UPDATE_FAILED'"
+			dw-loading="vmdetails">
+			<div class="panel-heading">Error info</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="clearfix visible-md-block"></div>
+					<div class="col-md-3">
+						<strong>Start date</strong>
+					</div>
+					<div class="col-md-3">{{vmDetails.provisionInfoStartDate}}</div>
+					<div class="col-md-3">
+						<strong>End date</strong>
+					</div>
+					<div class="col-md-3">{{vmDetails.provisionInfoEndDate}}</div>
+					<div class="clearfix visible-md-block"></div>
+					<div class="col-md-3">&nbsp;</div>
+					<div class="col-md-3">&nbsp;</div>
+					<div class="col-md-3">
+						<strong>Current Item</strong>
+					</div>
+					<div class="col-md-3">{{vmDetails.provisionInfoCurrentItemDisplayName}}
+						&nbsp;</div>
+					<div class="clearfix visible-md-block"></div>
+					<div class="col-md-3">
+						<strong>Content exception</strong>
+					</div>
+					<div class="col-md-9">{{vmDetails.provisionInfoContentException}}</div>
+				</div>
+			</div>
+		</div>

@@ -1,0 +1,54 @@
+<div class="modal-header">
+	<h4 class="modal-title">Create an invite</h4>
+</div>
+<div class="modal-body" ng-style="{height: currentHgt()}">
+	<div class="row clearfix">
+	<div class="col-md-12 column">
+    
+    <form class="form-horizontal" name="form" id="form">
+        <div class="form-group">
+            <label for="description" class="col-sm-2 control-label">Description</label>
+            <div class="col-sm-6">
+            	<input type="text" ng-minlength="3" ng-maxlength="255" name="description" ng-model="description" required size="50">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="description" class="col-sm-2 control-label">Port</label>
+            <div class="col-sm-6">
+            	<input type="number" ng-minlength="1" ng-maxlength="5" name="port" ng-model="port" required size="10" integer min="1" max="65535">
+				<span ng-show="form.port.$error.min || form.port.$error.max">
+		    			The value must be in range 1 to 65535
+				</span>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="validtill" class="col-sm-2 control-label">Valid till</label>
+            <div class="col-sm-4">
+                <div class="input-group"> 
+					<input id="validtill" type="text" class="form-control" uib-datepicker-popup ng-model="dt" is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close">
+                    <span class="input-group-addon" ng-click="open2()"><span class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+        	<span class="col-xs-12 col-md-12">
+				<div class="pull-left">
+					<button ng-disabled="form.$invalid" class="btn btn-primary pull-left" type="button" ng-click="createInvite()">
+						<span class="glyphicon glyphicon-record"></span> Create
+					</button>&nbsp;
+				</div>
+			</span>
+		</div>        
+    </form>
+    </div></div>
+</div>
+<div class="modal-footer" id="createInviteDiv">
+				<div class="pull-left">
+			<span class="col-xs-12 col-md-12">
+			    <button class="btn btn-default" type="button" ng-click="close()">
+					<span class="glyphicon glyphicon-log-out"></span> Close
+			    </button>
+			</span>
+</div>
+</div>

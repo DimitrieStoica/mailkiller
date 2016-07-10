@@ -1,0 +1,148 @@
+<div id="monitoring">
+	<div>
+		<div class="page-header" data-ng-show="loadingMonitor">
+			<h3>
+			Loading monitoring for {{target}}...
+			<i class="fa fa-spinner fa-spin"></i>
+			</h3>
+		</div>
+		<div class="page-header" data-ng-hide="loadingMonitor">
+			<h3>
+			Monitoring {{target}}
+			</h3>
+		</div>
+	</div>
+	<div class="panel-heading" data-ng-hide="loadingMonitor">
+	<div class="container content">
+	<div class="alert alert-error" ng-if="error">
+		<b>Error:</b> {{ error }}
+	</div>
+	<div class="row" ng-hide="loadingMonitor" >
+		<table width="100%">
+		<tr>
+			<td width="50%" valign="bottom">
+				<h3>Active/Total data source connections</h3>
+				Connection pool current usage is {{percentageActive}} %	
+			</td>
+			<td valign="bottom">
+				<h3>Heap usage</h3>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+				<nvd3 options="optionsCnx" data="dataCnx"></nvd3>
+			</td>
+			<td valign="top">
+				<nvd3 options="optionsHeap" data="dataHeap"></nvd3>
+			</td>
+		</tr>
+		</table>
+	</div>
+	<div class="row" ng-hide="loadingMonitor" >	
+	<h3>Thread dump - total {{threadStats.total}} <a type="button" class="btn btn-info" ng-click="getThreadDump()"><span
+                                    class="glyphicon glyphicon-repeat"></span> Refresh</a>
+	</h3>
+	<!--  div class="progress" -->
+		<div class="col-md-12" ng-show="loaddump">
+		<i class="fa fa-spinner fa-spin"></i>
+		</div>
+		<div class="col-md-12" ng-hide="loaddump">
+				<div ng-if="threadStats.NEW  > 0" class="progress-bar progress-bar-info" style="width:{{ threadStats.NEW / threadStats.total * 100 | number:2 }}%;">
+					New {{ threadStats.NEW }}
+				</div>
+				<div ng-if="threadStats.RUNNABLE > 0" class="progress-bar progress-bar-success" style="width:{{roundIt(threadStats.RUNNABLE / threadStats.total * 100)}}%">
+					Runnable {{ threadStats.RUNNABLE }}
+				</div>
+				<div ng-if="threadStats.BLOCKED > 0" class="progress-bar progress-bar-danger" style="width:{{roundIt(threadStats.BLOCKED / threadStats.total * 100)}}%;">
+					Blocked {{ threadStats.BLOCKED }}
+				</div>
+				<div ng-if="threadStats.WAITING &gt; 0" class="progress-bar progress-bar-warning" style="width:{{ (threadStats.WAITING / threadStats.total * 100)}}%;">
+					Waiting {{ threadStats.WAITING }}
+				</div>
+				<div ng-if="threadStats.TIMED_WAITING > 0" class="progress-bar" style="width:{{roundIt(threadStats.TIMED_WAITING / threadStats.total * 100)}}%;">
+					Timed waiting {{ threadStats.TIMED_WAITING }}
+				</div>
+				<div ng-if="threadStats.TERMINATED > 0" class="bar bar-info" style="width:{{roundIt(threadStats.TERMINATED / threadStats.total * 100)}}%;">
+					Terminated {{ threadStats.TERMINATED }}
+				</div>
+			</div>
+		</div>
+	<!-- /div -->
+	</div>
+	<div class="row" >
+		<div class="col-md-12">	
+			<uib-accordion close-others="true">
+				<uib-accordion-group ng-repeat="thread in dump | orderBy:'threadName' track by thread.threadId">
+					<uib-accordion-heading>
+						<small class="muted">{{thread.threadId}}</small>
+						{{thread.threadName}}
+						<span class="pull-right label" ng-class="{ 'label-info': thread.threadState == 'NEW', 'label-success': thread.threadState == 'RUNNABLE', 'label-danger': thread.threadState == 'BLOCKED', 'label-primary' : thread.threadState == 'TIMED_WAITING', 'label-warning': thread.threadState == 'WAITING', 'label-info': thread.threadState == 'TERMINATED'}">{{thread.threadState}}</span> <span class="label label-warning"  ng-if="thread.suspended">suspended</span>
+					</uib-accordion-heading>
+					<div class="container">
+						<div class="row" >
+								<table class="col-md-6">
+									<colgroup>
+										<col style="min-width: 10em;"/>
+									</colgroup>
+									<tr><td>Blocked count</td><td>{{thread.blockedCount}}</td></tr>
+									<tr><td>Blocked time</td><td>{{thread.blockedTime}}</td></tr>		
+									<tr><td>Waited count</td><td>{{thread.waitedCount}}</td></tr>
+									<tr><td>Waited time</td><td>{{thread.waitedTime}}</td></tr>
+								</table>
+								<table class="col-md-6">
+									<colgroup>
+										<col style="min-width: 10em;"/>
+									</colgroup>
+									<tr><td>Lock name</td><td style="word-break: break-word;">{{thread.lockName}}</td></tr>
+									<tr><td>Lock owner id</td><td>{{thread.lockOwnerId}}</td></tr>				
+									<tr><td>Lock owner name</td><td style="word-break: break-word;">{{thread.lockOwnerName}}</td></tr>
+								</table>
+							</div>
+						</div>
+						<div class="row">
+							<b>Stack trace</b>
+							<table width="100%">
+								<tr ng-repeat="el in thread.stackTrace">
+									<td align="right" width="50px">&nbsp;<span class="label label-info" ng-if="el.nativeMethod">native</span>&nbsp;&nbsp;</td><td align="left">{{el.className}}.{{el.methodName}}({{el.fileName}}:{{el.lineNumber}})</td>
+								</tr>
+							</table>
+						</div>
+				</uib-accordion-group>
+			</uib-accordion>
+		</div>
+	</div>
+</div>
+	<div class="row" ng-hide="loadingMonitor">
+		<h3><a type="button" class="btn btn-info" ng-click="getLRULogs()"><span
+                                    class="glyphicon glyphicon-repeat"></span> Refresh</a>
+	</h3>
+	
+		<div class="col-md-12">	
+		<table cellspacing="0" cellpadding="5" width="100%">
+		<tr>
+			<td>Level</td>
+			<td>Date</td>
+			<td>Logger</td>
+			<td>Message</td>
+		</tr>
+		<tr ng-repeat="log in logs">
+			<td valign="top" class="{{$index % 2 == 0 ? 'odd' : 'even'}}"><span class="pull-left label" ng-class="{'label-info' : log.levelStr == 'INFO', 'label-warning' : log.levelStr == 'WARN', 'label-danger' : log.levelStr == 'ERROR'}">{{log.levelStr}}</span></td>
+			<td valign="top" nowrap class="{{$index % 2 == 0 ? 'odd' : 'even'}}"><span class="pull-left">{{getDate(log.timeStamp)}}</span></td>
+			<td valign="top" class="{{$index % 2 == 0 ? 'odd' : 'even'}}"><span class="pull-left">{{log.loggerName}}</span></td>
+			<td valign="top" class="{{$index % 2 == 0 ? 'odd' : 'even'}}"><span class="pull-left">{{log.formattedMessage}}</span>
+				<div ng-show="log.exception">
+				<br>
+					<b>Stack trace</b>
+					<table width="100%">
+						<tr ng-repeat="el in log.exception.stackTrace">
+							<td align="right" width="50px">&nbsp;<span class="label label-info" ng-if="el.nativeMethod">native</span>&nbsp;&nbsp;</td><td align="left">{{el.className}}.{{el.methodName}}({{el.fileName}}:{{el.lineNumber}})</td>
+						</tr>
+					</table>
+
+				</div>
+			</td>
+		</tr>						
+		</table>
+		</div>
+	</div>
+</div>

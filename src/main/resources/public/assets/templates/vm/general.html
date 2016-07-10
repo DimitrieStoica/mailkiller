@@ -1,0 +1,294 @@
+<div class="panel panel-info" dw-loading="vmdetails">
+			<div class="panel-heading">
+				General <span class="label label-success pull-right"
+					ng-show="vmDetails.vroStatus == 'PROVISIONED'"><span
+					class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+					Provisioned</span> <span class="label label-danger pull-right"
+					ng-show="vmDetails.vroStatus == 'FAILED'"><span
+					class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+					Failed</span> <span class="label label-danger pull-right"
+					ng-show="vmDetails.vroStatus == 'UPDATE_FAILED'"><span
+					class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+					Update failed</span> <img src="assets/img/progress-detail2.gif"
+					class="pull-right"
+					ng-show="vmDetails.vroStatus == 'PROVISIONING' || vmDetails.vroStatus == 'UNPROVISIONING' || vmDetails.vroStatus == 'UPDATING'" />
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-md-3">
+						<strong>Service name</strong>
+					</div>
+					<div class="col-md-9">{{vmDetails.serviceInstanceName}}</div>
+					<div class="clearfix visible-md-block"></div>
+					<div class="col-md-3">
+						<strong>Organization Name</strong>
+					</div>
+					<div class="col-md-3">{{vmDetails.organizationName}}</div>
+					<div class="col-md-3">
+						<strong>Space Name</strong>
+					</div>
+					<div class="col-md-3">{{vmDetails.spaceName}}</div>
+					<div class="clearfix visible-md-block"></div>
+					<div class="col-md-3">
+						<strong>Created at</strong>
+					</div>
+					<div class="col-md-3">{{vmDetails.createdAt}}</div>
+					<div class="col-md-3">
+						<strong>Updated at</strong>
+					</div>
+					<div class="col-md-3">{{vmDetails.updatedAt}}</div>
+					<div class="clearfix visible-md-block"></div>
+					<div class="col-md-12">
+						<hr />
+					</div>
+					<div ng-show="vmDetails.vroStatus == 'PROVISIONED'">
+						<div class="col-md-3">
+							<strong>Power State *</strong>
+						</div>
+						<div class="col-md-3">
+							<div class="btn-group"
+								ng-show="vmRemoteStatus.powerState == 'CHANGING_STATE'">
+								<button type="button"
+									class="btn btn-xs btn-warning dropdown-toggle"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false" disabled>
+									<span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
+									Waiting for power state <span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu">
+								</ul>
+							</div>
+							<div class="btn-group"
+								ng-show="vmRemoteStatus.powerState == 'POWERED_ON'">
+								<button type="button"
+									class="btn btn-xs btn-success dropdown-toggle"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false">
+									<span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+									Powered On <span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu">
+									<li><a ng-click="changeVmPowerState('SHUTDOWN_GUEST')">Send
+											Shutdown Signal</a></li>
+									<li><a ng-click="changeVmPowerState('RESET')">Reset</a></li>
+									<li><a ng-click="changeVmPowerState('POWER_OFF')">Power
+											Off</a></li>
+								</ul>
+							</div>
+							<div class="btn-group"
+								ng-show="vmRemoteStatus.powerState == 'POWERED_OFF'">
+								<button type="button"
+									class="btn btn-xs btn-danger dropdown-toggle"
+									data-toggle="dropdown" aria-haspopup="true"
+									aria-expanded="false">
+									<span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+									Powered Off <span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu">
+									<li><a ng-click="changeVmPowerState('POWER_ON')">Power
+											On</a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<strong>Guest Tools *</strong>
+						</div>
+						<div class="col-md-3">
+							<span class="label label-success"
+								ng-show="vmRemoteStatus.guestTools == 'GUEST_TOOLS_RUNNING'"><span
+								class="glyphicon glyphicon-play" aria-hidden="true"></span>
+								Running</span> <span class="label label-danger"
+								ng-show="vmRemoteStatus.guestTools == 'GUEST_TOOLS_NOT_RUNNING'"><span
+								class="glyphicon glyphicon-stop" aria-hidden="true"></span> Not
+								running</span>
+						</div>
+						<div class="clearfix visible-md-block"></div>
+						<div class="col-md-3">
+							<strong>CPU Usage *</strong>
+						</div>
+						<div class="col-md-3">
+							<div class="progress">
+								<div class="progress-bar" role="progressbar"
+									aria-valuenow="{{vmRemoteStatus.cpuUsageInPercent}}"
+									aria-valuemin="0" aria-valuemax="100"
+									style="width: {{vmRemoteStatus.cpuUsageInPercent}}%"></div>
+								<span class="progress-value"
+									ng-show="vmRemoteStatus.powerState == 'POWERED_ON'">{{vmRemoteStatus.cpuUsageInPercent}}
+									%</span> <span class="progress-value"
+									ng-show="vmRemoteStatus.powerState == 'POWERED_OFF'">Powered
+									Off</span>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<strong>Memory Usage *</strong>
+						</div>
+						<div class="col-md-3">
+							<div class="progress">
+								<div class="progress-bar" role="progressbar"
+									aria-valuenow="{{vmRemoteStatus.memUsageInPercent}}"
+									aria-valuemin="0" aria-valuemax="100"
+									style="width: {{vmRemoteStatus.memUsageInPercent}}%"></div>
+								<span class="progress-value"
+									ng-show="vmRemoteStatus.powerState == 'POWERED_ON'">{{vmRemoteStatus.memUsageInPercent}}
+									%</span> <span class="progress-value"
+									ng-show="vmRemoteStatus.powerState == 'POWERED_OFF'">Powered
+									Off</span>
+							</div>
+						</div>
+						<div class="clearfix visible-md-block"></div>
+						<div class="col-md-3">
+							<strong>VCAP file status</strong>
+						</div>
+						<div class="col-md-3">
+							<span class="label label-success"
+								ng-show="vmDetails.vcapFileSyncStatus == 'SYNCHRONIZED'"><span
+								class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+								Synchronized</span> <span class="label label-danger"
+								ng-show="vmDetails.vcapFileSyncStatus == 'FAILED'"><span
+								class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+								Failed</span> <img src="assets/img/progress-detail2.gif"
+								ng-show="vmDetails.vcapFileSyncStatus == 'SYNCHRONIZING'" />
+							&nbsp;&nbsp;<a type="button" class="btn btn-danger width160"
+								ng-click="retryVcapFileSync()"
+								ng-show="vmDetails.vcapFileSyncStatus == 'FAILED'"></span> <span
+								class="glyphicon glyphicon-repeat"></span> Retry</a>
+						</div>
+						<div class="clearfix visible-md-block"></div>
+						<div class="col-md-12">
+							<strong
+								ng-show="vmRemoteStatus.guestTools == 'GUEST_TOOLS_NOT_RUNNING'">Disk
+								usage cannot be displayed, because VMware Guest Tools are not
+								running.</strong>
+							<table class="table table-striped" style="margin-top: 12px"
+								ng-show="vmRemoteStatus.guestTools == 'GUEST_TOOLS_RUNNING'">
+								<thead>
+									<tr>
+										<th style="width: 200px">Disk / Mount Point</th>
+										<th style="width: 160px">Used Capacity *</th>
+										<th style="width: 160px">Total Capacity *</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="disk in vmRemoteStatus.disks">
+										<td style="width: 200px">{{disk.name}}</td>
+										<td style="width: 160px">{{disk.usedCapacityInGB}} GB</td>
+										<td style="width: 160px">{{disk.totalCapacityInGB}} GB</td>
+										<td>
+											<div class="row">
+												<div class="col-md-9" style="margin-top: 0;">
+													<div class="progress">
+														<div class="progress-bar" role="progressbar"
+															aria-valuenow="{{disk.usedCapacityInPercentage}}"
+															aria-valuemin="0" aria-valuemax="100"
+															style="width: {{disk.usedCapacityInPercentage}}%"></div>
+														<span class="progress-value">{{disk.usedCapacityInPercentage}}
+															%</span>
+													</div>
+												</div>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="clearfix visible-md-block"></div>
+						<div class="col-md-12">
+							<strong> <small>* The values are refreshed every
+									5 minutes, it is possible that current state is displayed
+									delayed. </small>
+							</strong>
+						</div>
+					</div>
+					<div class="clearfix visible-md-block"></div>
+					<div class="col-md-12"
+						ng-show="vmDetails.vroStatus == 'PROVISIONED'">
+						<hr />
+					</div>
+					<div class="clearfix visible-md-block"></div>
+					<div class="col-md-12">
+						<div class="pull-right">
+							<a type="button" class="btn btn-danger width160"
+								ng-click="rescheduleVm()"
+								ng-disabled="vmDetails.buttonState.disabled"
+								ng-show="vmDetails.vroStatus == 'FAILED'"><span
+								class="glyphicon glyphicon-repeat"></span>
+								{{vmDetails.buttonState.label}}</a> &nbsp;
+							<script type="text/ng-template" id="tree_item_renderer.html">
+									<label>
+                                        <input type="radio" name="snapshotSelection" ng-value="current" ng-model="$parent.data.selectedSnapshot">
+                                         {{current.snapshotDescription}} ({{current.snapshotCreatedAt}})
+									</label>
+                                    <ul>
+                                        <li ng-repeat="current in current.children"
+                                            ng-include="'tree_item_renderer.html'"></li>
+                                    </ul>
+                                </script>
+							<script type="text/ng-template" id="snapshotsDialog.html">
+                                    <form>
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">
+							 				<span data-ng-hide="loadingSnapshots">
+											Snapshots 
+											</span>
+							 				<span data-ng-show="loadingSnapshots">
+												Loading snapshot list... please wait 
+ 												<i class="fa fa-spinner fa-spin"></i>
+ 											</span>
+										</h4>
+                                    </div>
+                                    <div class="modal-body" style="overflow: auto; max-height: 550px;">
+                                        <div class="tree">
+                                            <ul>
+                                                <li ng-repeat="current in vmSnapshots"
+                                                    ng-include="'tree_item_renderer.html'"></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+										<table>
+										<tr><td nowrap>
+                                        <input type="text" ng-model="descriptionSnapshot" class="form-control pull-left" style="width: 160px; display: inline;" placeholder="Snapshot description">&nbsp;
+                                        <button class="btn btn-primary pull-left" type="button" ng-click="takeSnapshot(descriptionSnapshot)" ng-disabled="!descriptionSnapshot || disableIfAction()"><span
+                                                class="glyphicon glyphicon-camera"></span> Take
+												<span data-ng-show="takingSnapshot">
+ 													<i class="fa fa-spinner fa-spin"></i>
+  												</span>
+                                        </button>&nbsp;
+                                        <button class="btn btn-warning" type="button" ng-click="removeSnapshot()" ng-disabled="disableIfActionOrNoId()" confirm="Remove '{{data.selectedSnapshot.snapshotDescription}} ({{data.selectedSnapshot.snapshotCreatedAt}})' ? - This cannot be undone"><span
+                                                class="glyphicon glyphicon-remove"></span> Remove 
+												<span data-ng-show="removingSnapshot">
+ 													<i class="fa fa-spinner fa-spin"></i>
+  												</span>
+                                        </button>&nbsp;
+                                        <button class="btn btn-danger" type="button" ng-click="removeAllSnapshots()" ng-disabled="disableIfAction()" confirm="Remove all snapshots from '{{data.selectedSnapshot.snapshotDescription}} ({{data.selectedSnapshot.snapshotCreatedAt}}) ? - This cannot be undone"><span
+                                                class="glyphicon glyphicon-remove"></span> Remove all
+												<span data-ng-show="removingAllSnapshots">
+ 													<i class="fa fa-spinner fa-spin"></i>
+  												</span>
+                                        </button>&nbsp;
+                                        <button class="btn btn-primary" type="button" ng-click="selectSnapshot()" ng-disabled="disableIfActionOrNoId()"><span
+                                                class="glyphicon glyphicon-open"></span> Go to
+												<span data-ng-show="selectingSnapshot">
+ 													<i class="fa fa-spinner fa-spin"></i>
+  												</span>
+                                        </button>&nbsp;
+                                        <button class="btn btn-default" type="button" ng-click="close()"><span
+                                                class="glyphicon glyphicon-log-out"></span> Close
+                                        </button>
+										</td></tr></table>
+                                    </div>
+                                    </form>
+                                </script>
+							<a type="button" class="btn btn-info"
+								ng-click="openSnapshotsDialog()"><span
+								class="glyphicon glyphicon-camera"></span> Snapshots</a> &nbsp; <a
+								type="button" class="btn btn-info"
+								href="#/vmservices/{{vmDetails.spaceGuid}}"><span
+								class="glyphicon glyphicon-search"></span> Show all virtual
+								machines in space</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>

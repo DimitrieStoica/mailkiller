@@ -1,0 +1,39 @@
+<div id="vmservices" ng-init="init()">
+	<div class="page-header" ng-cloak>
+		<h3>Virtual Machine '{{vmDetails.serviceInstanceName}}'</h3>
+	</div>
+	<div class="row">
+		<div ng-include src="'assets/templates/status.html'"></div>
+	</div>
+	<div class="tabsDynamicHeight">
+		<md-content> 
+			<md-tabs md-dynamic-height="true" md-border-bottom="true"> 
+				<md-tab label="General">
+					<md-content class="md-padding" ng-include src="'assets/templates/vm/general.html'"></md-content> 
+				</md-tab> 
+				<md-tab label="Summary" ng-disabled="!(vmDetails.vroStatus == 'PROVISIONED')">
+					<md-content class="md-padding" ng-include src="'assets/templates/vm/summary.html'"></md-content> 
+				</md-tab> 
+				<md-tab label="Service plan" ng-disabled="vmDetails.serviceInstanceId == null"> 
+					<md-content class="md-padding" ng-include src="'assets/templates/vm/plan.html'"></md-content> 
+				</md-tab> 
+				<md-tab label="Bindable application" ng-disabled="vmDetails.serviceInstanceId == null"> 
+					<md-content class="md-padding" ng-include src="'assets/templates/vm/bindableapp.html'"></md-content> 
+				</md-tab> 
+				<md-tab label="Bound load balancers" ng-disabled="vmDetails.serviceInstanceId == null">
+					<md-content class="md-padding" ng-include src="'assets/templates/vm/boundlbs.html'"></md-content> 
+				</md-tab> 
+				<md-tab label="VM Operations" ng-disabled="vmDetails.serviceInstanceId == null"> 
+					<md-content class="md-padding" ng-include src="'assets/templates/vm/vmoperations.html'"></md-content> 
+				</md-tab> 
+				<md-tab label="ORG to ORG" ng-disabled="!(vmDetails.vroStatus == 'PROVISIONED')"> 
+					<md-content class="md-padding" ng-include src="'assets/templates/vm/vmtovm.html'"></md-content> 
+				</md-tab> 
+				<md-tab label="Error info" ng-disabled="!(vmDetails.vroStatus == 'FAILED' || vmDetails.vroStatus == 'UPDATE_FAILED')">
+					<md-content class="md-padding" ng-include src="'assets/templates/vm/errorinfo.html'"></md-content> 
+				</md-tab> 
+			</md-tabs>
+		</md-content>
+	</div>
+</div>
+

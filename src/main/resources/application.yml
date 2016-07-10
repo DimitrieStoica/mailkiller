@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: "jdbc:mysql://localhost/emailkiller"
+    username: emailkiller
+    password: emailkiller
+    driver-class-name: com.mysql.jdbc.Driver
+#    initialize: true
+#    data: classpath:sample-data.sql
+  jpa:
+    hibernate:
+      ddl-auto: update
+# create-drop
+
+---
+

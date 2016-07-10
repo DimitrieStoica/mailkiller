@@ -1,0 +1,91 @@
+<div class="panel panel-info" dw-loading="vmToVm">
+	<div class="panel-heading">
+		Access for other organizations 
+	</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-xs-12 col-md-12">
+				<div ng-show="vmToVm.length == 0 && (vmDetails.vroStatus == 'PROVISIONING' || vmDetails.vroStatus == 'UNPROVISIONING')">
+					ORG to ORG will be available after successful provision of the virtual machine.</div>
+				<div ng-show="vmToVm.length == 0 && vmDetails.vroStatus == 'PROVISIONED'">
+					No ORG to ORG have been defined.</div>
+				<table class="table table-striped" ng-show="vmToVm.length > 0">
+					<thead>
+						<tr>
+							<th>Organization</th>
+							<th>Space</th>
+							<th>Host</th>
+							<th>Port</th>
+							<th>Status</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="vmtovm in vmToVm | orderBy : '-createdDate'">
+							<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">{{vmtovm.organization}}</td>
+							<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">{{vmtovm.space}}</td>
+							<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">{{vmtovm.host}}</td>
+							<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">{{vmtovm.port}}</td>
+							<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">
+								<a href popover-animation="true" uib-popover='Invite description is "{{vmtovm.invite.description}}"' popover-title="Related invite"><span class="glyphicon glyphicon-info-sign"></span></a>							
+								<span class="label label-success" ng-show="vmtovm.status == 'ACCEPTED'">
+								{{vmToVmStatus(vmtovm)}}
+								</span>
+								<span class="label label-danger" ng-show="vmtovm.status == 'REJECTED'">
+								{{vmToVmStatus(vmtovm)}}
+								</span>
+								<span class="label label-warning" ng-show="vmtovm.status == 'WAITING_APPROVAL'">
+								{{vmToVmStatus(vmtovm)}}
+								</span>
+								<div ng-show="vmtovm.boundServiceName != null">
+									<span class="label label-info">
+										<i>Attached to user provided service </i><b>[{{vmtovm.boundServiceName}}]</b><i> of status </i><b>[{{vmtovm.boundServiceStatus}}]</b>
+									</span>
+								</div>
+							</td>
+							<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">
+								<div class="btn-group">
+									<label ng-show="canAccept(vmtovm)" class="btn btn-success" confirm="Approve Org to Org ?" ng-click="acceptVmToVm(vmtovm)">Approve</label>
+									<label ng-show="canReject(vmtovm)" class="btn btn-danger" confirm="Reject Org to Org ?" ng-click="rejectVmToVm(vmtovm)">Reject</label>
+									<label ng-show="canDrop(vmtovm)" class="btn btn-warning" confirm="Drop Org to Org ?" ng-click="dropVmToVm(vmtovm)">Drop</label>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-xs-12 col-md-12">
+				<hr />
+			</div>
+			<div class="col-xs-12 col-md-12">
+				<div class="pull-left">
+					<a type="button" class="btn btn-info" ng-click="openInvitesDialog()">
+					<span class="glyphicon glyphicon-comment"></span> Invites
+					</a>&nbsp; 
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/ng-template" id="inviteMail.html">
+<div class="modal-header">
+    <h4 class="modal-title">
+		Link for {{invite.description}}.
+	</h4>
+</div>
+<div class="modal-body" style="overflow: auto; max-height: 550px;">
+By following the link below, a user will be able to accept or reject the invitation for {{invite.description}}.<br><br>
+<b>{{buildLink()}}</b><br><br>
+The invitation is valid till {{invite.expiringDate}}
+</div>
+<div class="modal-footer">
+<table>
+<tr><td nowrap>
+    <button class="btn btn-default" type="button" ng-click="close()"><span
+            class="glyphicon glyphicon-log-out"></span> Close
+    </button>
+</td></tr></table>
+</div>
+
+</script>
+

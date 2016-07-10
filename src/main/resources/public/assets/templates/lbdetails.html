@@ -1,0 +1,646 @@
+<div id="lbservices" ng-init="init()">
+    <div class="page-header">
+        <h3>LoadBalancer '{{lbDetails.serviceInstanceName}}'</h3>
+    </div>
+
+    <div class="row">
+        <div ng-include src="'assets/templates/status.html'"></div>
+    </div>
+	<div class="tabsDynamicHeight">
+		<md-content> 
+		<md-tabs md-dynamic-height="true" md-border-bottom="true">
+			<md-tab label="LB general and details"> 
+				<md-content class="md-padding">
+				<div class="panel panel-info" dw-loading="lbdetails">
+                <div class="panel-heading">General
+                    <span class="label label-success pull-right" ng-show="lbDetails.vroStatus == 'PROVISIONED'"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Provisioned</span>
+                    <span class="label label-danger pull-right" ng-show="lbDetails.vroStatus == 'FAILED'"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Failed</span>
+                    <span class="label label-warning pull-right" ng-show="lbDetails.vroStatus == 'WAITING_FOR_USER_INPUT'"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span> Waiting for user input</span>
+                    <img src="assets/img/progress-detail2.gif" class="pull-right" ng-show="lbDetails.vroStatus == 'PROVISIONING' || lbDetails.vroStatus == 'UNPROVISIONING'">
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-3"><strong>Service instance name</strong></div>
+                        <div class="col-md-9">{{lbDetails.serviceInstanceName}}</div>
+                        <div class="clearfix visible-md-block"></div>
+                        <div class="col-md-3"><strong>Organization Name</strong></div>
+                        <div class="col-md-3">{{lbDetails.organizationName}}</div>
+                        <div class="col-md-3"><strong>Space Name</strong></div>
+                        <div class="col-md-3">{{lbDetails.spaceName}}</div>
+                        <div class="clearfix visible-md-block"></div>
+                        <div class="col-md-3"><strong>Created at</strong></div>
+                        <div class="col-md-3">{{lbDetails.createdAt}}</div>
+                        <div class="col-md-3"><strong>Updated at</strong></div>
+                        <div class="col-md-3">{{lbDetails.updatedAt}}</div>
+                        <div class="clearfix visible-md-block"></div>
+                        <div class="col-md-12">
+                            <hr>
+                        </div>
+                        <div class="clearfix visible-md-block"></div>
+                        <div class="col-md-12">
+                            <div class="pull-right">
+                                <a type="button" class="btn btn-danger width160" ng-click="rescheduleLb()" ng-show="lbDetails.vroStatus == 'FAILED'" ng-disabled="lbDetails.buttonState.disabled"><span class="glyphicon glyphicon-repeat"></span> {{lbDetails.buttonState.label}}</a>
+                                &nbsp;
+                                <a type="button" class="btn btn-info" href="#/lbservices/{{lbDetails.spaceGuid}}"><span class="glyphicon glyphicon-search"></span> Show all load balancers in this space</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+			<div class="panel panel-info" ng-show="lbDetails.vroStatus == 'PROVISIONED'" dw-loading="lbdetails">
+                <div class="panel-heading">Details of the provisioned load balancer</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-3"><strong>Cluster name</strong></div>
+                        <div class="col-md-3">{{lbDetails.summaryClusterName}}</div>
+                        <div class="col-md-3"><strong>External ports</strong></div>
+                        <div class="col-md-3">{{lbDetails.summaryExternalPorts}}</div>
+                        <div class="clearfix visible-md-block"></div>
+                        <div class="col-md-3"><strong>Load balancing policy</strong></div>
+                        <div class="col-md-3">{{lbDetails.summaryLoadBalancingPolicy}}</div>
+                        <div class="col-md-3"><strong>External fully qualified domain name</strong></div>
+                        <div class="col-md-3">{{lbDetails.summaryExternalFqdn}}</div>
+                        <div class="clearfix visible-md-block"></div>
+                        <div class="col-md-3"><strong>Virtual server name</strong></div>
+                        <div class="col-md-3">{{lbDetails.summaryVirtualServerName}}</div>
+                        <div class="col-md-3"><strong>External IP</strong></div>
+                        <div class="col-md-3">{{lbDetails.summaryExternalIp}}</div>
+                    </div>
+                </div>
+            </div><div class="panel panel-info" ng-show="lbDetails.vroStatus == 'WAITING_FOR_USER_INPUT'" dw-loading="lbinputports">
+                <div class="panel-heading">Enter your custom ports</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            Please enter your custom ports. After submitting the ports cannot be changed anymore.
+                            Don't forget to open a ticket for the additional firewall rules.
+                        </div>
+                        <div class="col-md-12">
+                            <hr>
+                        </div>
+                        <form name="customLbForm" novalidate>
+                            <div class="col-md-12 form-inline top10">
+                                <div class="form-group">
+                                    <label for="lbpolicy">Load balancing policy</label>
+                                    <select id="lbpolicy" class="form-control" ng-model="formCustomLb.loadBalancingPolicy" ng-options="o as o for o in formAllowedPolicies" required>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12 form-inline top10" ng-repeat="rule in formCustomLb.rules">
+                                <div class="form-group">
+                                    <select class="form-control" ng-model="rule.protocol" required>
+                                        <option>TCP</option>
+                                        <option>UDP</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input type="number" name="portInput" min="1" max="65536" ng-model="rule.port" integer="" required class="form-control" style="width: 160px" placeholder="port e.g. 80">
+                                </div>
+                                <div class="form-group">
+                                    <span class="glyphicon glyphicon-plus-sign" style="color: green" aria-hidden="true" ng-click="addPortLine(rule)"></span>
+                                    <span class="glyphicon glyphicon-minus-sign" style="color: red" aria-hidden="true" ng-click="removePortLine(rule)" ng-hide="formCustomLb.rules.length == 1"></span>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="col-md-12">
+                            <hr>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="alert alert-success" role="alert" ng-show="formCustomLbMessage.status == 'SUCCESS'">{{formCustomLbMessage.message}}
+                            </div>
+                            <div class="alert alert-danger" role="alert" ng-show="formCustomLbMessage.status == 'ERROR'">{{formCustomLbMessage.message}}
+                            </div>
+                            <div class="alert alert-warning" role="alert" ng-show="customLbForm.$invalid">The load
+                                balancer configuration is not valid. Fix it to save the definition.
+                            </div>
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-primary" ng-click="savePorts()" ng-disabled="customLbForm.$invalid">Save
+                                </button>
+                                <button type="button" class="btn btn-danger" ng-click="orderLoadBalancer()" ng-disabled="customLbForm.$invalid">Order load balancer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            </md-content>
+			</md-tab>
+            
+			<md-tab label="Bound Virtual Machines" ng-disabled="!(lbDetails.lbaasType == 'VIRTUAL_MACHINE')"> 
+				<md-content class="md-padding">
+			<div class="panel panel-info" dw-loading="lbVirtualMachines" ng-show="lbDetails.lbaasType == 'VIRTUAL_MACHINE'">
+                <div class="panel-heading">Bound Virtual Machines</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div ng-show="lbVirtualMachines.length == 0">The load balancer is not bound to a virtual
+                            machine.
+                        </div>
+                        <table class="table table-striped" ng-show="lbVirtualMachines.length &gt; 0">
+                            <thead>
+                            <tr>
+                                <th>Service Instance Name</th>
+                                <th>Service ID</th>
+                                <th>Plan ID</th>
+                                <th>Plan OS</th>
+                                <th>Plan CPU Count</th>
+                                <th>Plan Mem. Size</th>
+                                <th>Plan Disk</th>
+                                <th>VRO Binding Status</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody ng-repeat="service in lbVirtualMachines">
+                            <tr>
+                                <td>
+                                    {{service.serviceInstanceName}}
+                                </td>
+                                <td>
+                                    {{service.serviceId}}
+                                </td>
+                                <td>
+                                    {{service.planId}}
+                                </td>
+                                <td>
+                                    {{service.planOperatingSystem}}
+                                </td>
+                                <td>
+                                    {{service.planCpuCount}}
+                                </td>
+                                <td>
+                                    {{service.planMemorySize}}
+                                </td>
+                                <td>
+                                    {{service.planDisk}}
+                                </td>
+                                <td>
+                                    <span class="label label-success" ng-show="service.vroBindingStatus == 'BOUND'"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Bound</span>
+                                    <span class="label label-danger" ng-show="service.vroBindingStatus == 'FAILED'"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Failed</span>
+                                    <span class="label label-warning" ng-show="service.vroBindingStatus == 'WAITING_FOR_LB_USER_INPUT'"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span>  Waiting for user input (LB)</span>
+                                    <span class="label label-warning" ng-show="service.vroBindingStatus == 'WAITING_FOR_VM'"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span>  Waiting for virtual machine</span>
+                                    <span class="label label-warning" ng-show="service.vroBindingStatus == 'WAITING_FOR_LB'"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span>  Waiting for load balancer</span>
+                                    <span class="label label-warning" ng-show="service.vroBindingStatus == 'NO_VM_AVAILABLE'"><span class="glyphicon glyphicon-pause" aria-hidden="true"></span>  No virtual machine available</span>
+                                    <img src="assets/img/progress-vm.gif" ng-show="service.vroBindingStatus == 'BINDING'">
+                                </td>
+                                <td>
+                                    <a type="button" class="btn btn-info" href="#/vmdetails/{{service.serviceInstanceId}}"><span class="glyphicon glyphicon-search"></span> Details</a>&nbsp;
+                                    <a type="button" class="btn btn-danger width160" ng-click="rescheduleLoadBalancerVmBinding(service)" ng-show="service.vroBindingStatus == 'FAILED'" ng-disabled="service.buttonState.disabled"><span class="glyphicon glyphicon-repeat"></span> {{service.buttonState.label}}</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-12">
+                        <hr>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="pull-right">
+                            <a type="button" class="btn btn-info" ng-click="refreshVmBindings()"><span class="glyphicon glyphicon-repeat"></span> Refresh</a>
+                        </div>
+                    </div>
+                </div>
+            </div></md-content>
+			</md-tab><md-tab label="Certificates"> 
+				<md-content class="md-padding">
+				<div class="panel panel-info" ng-show="lbDetails.vroStatus == 'PROVISIONED'">
+                <div class="panel-heading">Certificates</div>
+                <div class="panel-body">
+                    <div class="row" dw-loading="lbdetailsServerCert">
+                        <div class="col-md-12"><h4>SSL Server Certificate</h4></div>
+                        <div class="col-md-12">
+                            <script type="text/ng-template" id="tree_item_renderer.html">
+                                <a href="#" onclick="return false;"><strong>{{current.commonName}}</strong></a>
+                                <ul>
+                                    <li>
+                                        <a href="#" onclick="return false;"
+                                           style="{{current.expired ? 'color: red' : ''}}">Not valid
+                                            before
+                                            {{current.notValidBefore}}</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" onclick="return false;"
+                                           style="{{current.expired ? 'color: red' : ''}}">Not valid
+                                            after
+                                            {{current.notValidAfter}}</a>
+                                    </li>
+                                    <li ng-show="current.subjectAlternativeNames"
+                                        ng-init="current.showSubjectAltName = false"
+                                        ng-click="current.showSubjectAltName = !current.showSubjectAltName">
+                                        <a href="#" onclick="return false;">Subject Alternative Names</a> <span
+                                            class="glyphicon glyphicon-chevron-{{current.showSubjectAltName ? 'down' : 'up'}}"></span>
+                                        <ul ng-show="current.showSubjectAltName">
+                                            <li ng-repeat="kv in current.subjectAlternativeNames">
+                                                <a href="#" onclick="return false;">{{kv.key}} = {{kv.value}}</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li ng-init="current.showSubjectDN = false"
+                                        ng-click="current.showSubjectDN = !current.showSubjectDN">
+                                        <a href="#" onclick="return false;">Subject DN</a> <span
+                                            class="glyphicon glyphicon-chevron-{{current.showSubjectDN ? 'down' : 'up'}}"></span>
+                                        <ul ng-show="current.showSubjectDN">
+                                            <li ng-repeat="kv in current.subjectDN">
+                                                <a href="#" onclick="return false;">{{kv.key}} = {{kv.value}}</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li ng-init="current.showIssuerDN = false"
+                                        ng-click="current.showIssuerDN = !current.showIssuerDN">
+                                        <a href="#" onclick="return false;">Issuer DN</a> <span
+                                            class="glyphicon glyphicon-chevron-{{current.showIssuerDN ? 'down' : 'up'}}"></span>
+                                        <ul ng-show="current.showIssuerDN">
+                                            <li ng-repeat="kv in current.issuerDN">
+                                                <a href="#" onclick="return false;">{{kv.key}} = {{kv.value}}</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li ng-if="current.parent">
+                                        <a href="#" onclick="return false;">Chain</a>
+                                        <ul>
+                                            <li ng-init="current = current.parent"
+                                                ng-include="'tree_item_renderer.html'"></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </script>
+                            <script type="text/ng-template" id="serverCertShowDialog.html">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Current Server Certificate</h4>
+                                </div>
+                                <div class="modal-body" style="overflow: auto; max-height: 550px;">
+                                    <div class="tree">
+                                        <ul>
+                                            <li ng-repeat="current in currentServerCertificates.certificates"
+                                                ng-include="'tree_item_renderer.html'"></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-default" type="button" ng-click="close()"><span
+                                            class="glyphicon glyphicon-log-out"></span> Close
+                                    </button>
+                                </div>
+                            </script>
+
+                            <script type="text/ng-template" id="serverCertVerifyDialog.html">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Verify Server Certificate</h4>
+                                </div>
+                                <div class="modal-body" style="overflow: auto; max-height: 550px;" dw-loading="lbServerCertConfirm">
+                                    <div class="alert alert-warning" role="alert" ng-show="warningMessage">
+                                        {{warningMessage}}
+                                    </div>
+                                    <div class="tree">
+                                        <ul>
+                                            <li ng-repeat="current in uploadedServerCertificates.certificates"
+                                                ng-include="'tree_item_renderer.html'"></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-danger" type="button" ng-click="confirm()"><span
+                                            class="glyphicon glyphicon-check" ng-disabled="!confirmed"></span> Confirm
+                                    </button>
+                                    <!--<button class="btn btn-danger" type="button" ng-click="reject()"><span-->
+                                            <!--class="glyphicon glyphicon-remove-sign"></span> Reject-->
+                                    <!--</button>-->
+                                    <button class="btn btn-default" type="button" ng-click="cancel()"><span
+                                            class="glyphicon glyphicon-log-out" ng-disabled="!confirmed"></span> Cancel
+                                    </button>
+                                </div>
+                            </script>
+
+                            <script type="text/ng-template" id="serverCertUploadDialog.html">
+                                <form name="uploadServerCertForm" id="uploadServerCertForm">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Upload Server Certificate</h4>
+                                    </div>
+                                    <div class="modal-body" style="overflow: auto; max-height: 550px">
+                                        <div class="form-group">
+                                            <label for="serverCertificateFile">Certificate</label>
+                                            <input type="file" ngf-select="" ng-model="serverCertificateFile"
+                                                   name="certificateFile" accept=".p12,.pfx" id="serverCertificateFile"
+                                                   required>
+
+                                            <p class="help-block">Select a .pfx or .p12 File (PKCS12).</p>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="serverCertificatePassword">Certificate Password</label>
+                                            <input type="password" class="form-control" ng-model="serverCertificatePassword"
+                                                   id="serverCertificatePassword" placeholder="Password">
+                                        </div>
+                                        <div class="alert alert-danger" role="alert" ng-show="errorMessage">
+                                            {{errorMessage}}
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="progress pull-left width160" ng-show="uploadInProgress">
+                                            <div class="progress-bar" role="progressbar"
+                                                 aria-valuenow="50"
+                                                 aria-valuemin="0" aria-valuemax="100"
+                                                 style="width: {{uploadProgress}}%">
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-primary" type="button"
+                                                ng-disabled="uploadServerCertForm.$invalid || uploadInProgress"
+                                                ng-click="upload(serverCertificatePassword, serverCertificateFile)"><span
+                                                class="glyphicon glyphicon-cloud-upload"></span> Upload
+                                        </button>
+                                        <button class="btn btn-default" type="button" ng-click="cancel()"><span
+                                                class="glyphicon glyphicon-log-out"></span> Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            </script>
+
+                            <p>
+                                <img src="assets/img/progress-detail2.gif" ng-show="currentServerCertificates.vroStatus == 'SYNCHRONIZING'">
+                                <span class="label label-danger" ng-show="currentServerCertificates.vroStatus == 'FAILED'"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Failed</span>
+                                <span class="label label-success" ng-show="currentServerCertificates.vroStatus == 'SYNCHRONIZED'"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Synchronized</span>
+                                <span class="label label-default" ng-show="currentServerCertificates.vroStatus == 'NOT_SET'"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> No SSL server certificate was uploaded yet.</span>
+                                <span class="label label-warning" ng-show="currentServerCertificates.expired"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span> At least one certificate expired!</span>
+                            </p>
+
+                            <p ng-show="currentServerCertificates.vroStatus != 'NOT_SET'">
+                                Certificate '{{currentServerCertificates.fileName}}' was uploaded at {{currentServerCertificates.uploadedAt}} and is valid from
+                                {{currentServerCertificates.notValidBefore}} to
+                                {{currentServerCertificates.notValidAfter}}.
+                            </p>
+                            <br>
+                            <button type="button" class="btn btn-info" ng-click="openServerCertShowDialog()" ng-disabled="currentServerCertificates.vroStatus == 'NOT_SET'"><span class="glyphicon glyphicon-eye-open"></span> {{currentServerCertificates.vroStatus == 'NOT_SET'
+                                ? 'No Certificate Set' : 'Show Current Server Certificate'}}
+                            </button>
+                            <button type="button" class="btn btn-danger" ng-click="openServerCertUploadDialog()" ng-disabled="currentServerCertificates.vroStatus == 'SYNCHRONIZING'"><span class="glyphicon glyphicon-cloud-upload"></span> Upload Server Certificate
+                            </button>
+                        </div>
+                        <div class="col-md-12">
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row" dw-loading="lbdetailsClientCert">
+                        <div class="col-md-12"><h4>SSL Client Authentification Certificate Bundle</h4></div>
+                        <div class="col-md-12">
+                            <script type="text/ng-template" id="clientCertUploadDialog.html">
+                                <form name="uploadClientCertForm" id="uploadClientCertForm">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Upload Client Certificate Bundle</h4>
+                                    </div>
+                                    <div class="modal-body" style="overflow: auto; max-height: 550px">
+                                        <div class="form-group">
+                                            <label for="clientCertificateFile">File</label>
+                                            <input type="file" ngf-select="" ng-model="clientCertificateFile"
+                                                   name="clientCertificateFile" accept=".crt" id="clientCertificateFile"
+                                                   required>
+
+                                            <p class="help-block">Select a .crt file.</p>
+                                        </div>
+                                        <div class="alert alert-danger" role="alert" ng-show="errorMessage">
+                                            {{errorMessage}}
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="progress pull-left width160" ng-show="uploadInProgress">
+                                            <div class="progress-bar" role="progressbar"
+                                                 aria-valuenow="50"
+                                                 aria-valuemin="0" aria-valuemax="100"
+                                                 style="width: {{uploadProgress}}%">
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-primary" type="button"
+                                                ng-disabled="uploadClientCertForm.$invalid || uploadInProgress"
+                                                ng-click="upload(clientCertificateFile)"><span
+                                                class="glyphicon glyphicon-cloud-upload"></span> Upload
+                                        </button>
+                                        <button class="btn btn-default" type="button" ng-click="cancel()"><span
+                                                class="glyphicon glyphicon-log-out"></span> Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            </script>
+
+                            <p>
+                                <img src="assets/img/progress-detail2.gif" ng-show="currentClientCertificates.vroStatus == 'SYNCHRONIZING'">
+                                <span class="label label-danger" ng-show="currentClientCertificates.vroStatus == 'FAILED'"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Failed</span>
+                                <span class="label label-success" ng-show="currentClientCertificates.vroStatus == 'SYNCHRONIZED'"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Synchronized</span>
+                                <span class="label label-default" ng-show="currentClientCertificates.vroStatus == 'NOT_SET'"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> No SSL client certificate bundle was uploaded yet.</span>
+                            </p>
+
+                            <p ng-show="currentClientCertificates.vroStatus != 'NOT_SET'">
+                                Client certificate bundle '{{currentClientCertificates.fileName}}' was uploaded at {{currentClientCertificates.uploadedAt}} and has {{currentClientCertificates.numberOfCertificates}} client certificates.
+                            </p>
+                            <br>
+                            <a class="btn btn-info" href="lbdetails/{{lbDetails.serviceInstanceId}}/clientcert/download" ng-disabled="currentClientCertificates.vroStatus == 'NOT_SET'"><span class="glyphicon glyphicon glyphicon-cloud-download"></span> {{currentClientCertificates.vroStatus == 'NOT_SET'
+                                ? 'No Bundle Uploaded' : 'Download'}}
+                            </a>
+                            <button type="button" class="btn btn-danger" ng-click="openClientCertUploadDialog()" ng-disabled="currentClientCertificates.vroStatus == 'SYNCHRONIZING'"><span class="glyphicon glyphicon-cloud-upload"></span> Upload Client Certificate Bundle
+                            </button>
+                        </div>
+                        <div class="col-md-12">
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row" dw-loading="lbdetailsRevokedCert">
+                        <div class="col-md-12"><h4>SSL Revoked Certificates Bundle</h4></div>
+                        <div class="col-md-12">
+                            <script type="text/ng-template" id="revokedCertUploadDialog.html">
+                                <form name="uploadRevokedCertForm" id="uploadRevokedCertForm">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Upload Revoked Certificates Bundle</h4>
+                                    </div>
+                                    <div class="modal-body" style="overflow: auto; max-height: 550px">
+                                        <div class="form-group">
+                                            <label for="revokedCertificateFile">File</label>
+                                            <input type="file" ngf-select="" ng-model="revokedCertificateFile"
+                                                   name="revokedCertificateFile" accept=".crl" id="revokedCertificateFile"
+                                                   required>
+
+                                            <p class="help-block">Select a .crl file.</p>
+                                        </div>
+                                        <div class="alert alert-danger" role="alert" ng-show="errorMessage">
+                                            {{errorMessage}}
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="progress pull-left width160" ng-show="uploadInProgress">
+                                            <div class="progress-bar" role="progressbar"
+                                                 aria-valuenow="50"
+                                                 aria-valuemin="0" aria-valuemax="100"
+                                                 style="width: {{uploadProgress}}%">
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-primary" type="button"
+                                                ng-disabled="uploadRevokedCertForm.$invalid || uploadInProgress"
+                                                ng-click="upload(revokedCertificateFile)"><span
+                                                class="glyphicon glyphicon-cloud-upload"></span> Upload
+                                        </button>
+                                        <button class="btn btn-default" type="button" ng-click="cancel()"><span
+                                                class="glyphicon glyphicon-log-out"></span> Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            </script>
+
+                            <p>
+                                <img src="assets/img/progress-detail2.gif" ng-show="currentRevokedCertificates.vroStatus == 'SYNCHRONIZING'">
+                                <span class="label label-danger" ng-show="currentRevokedCertificates.vroStatus == 'FAILED'"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Failed</span>
+                                <span class="label label-success" ng-show="currentRevokedCertificates.vroStatus == 'SYNCHRONIZED'"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Synchronized</span>
+                                <span class="label label-default" ng-show="currentRevokedCertificates.vroStatus == 'NOT_SET'"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> No SSL revoked certificates bundle was uploaded yet.</span>
+                            </p>
+
+                            <p ng-show="currentRevokedCertificates.vroStatus != 'NOT_SET'">
+                                Revoked certificates bundle '{{currentRevokedCertificates.fileName}}' was uploaded at {{currentRevokedCertificates.uploadedAt}} and has {{currentRevokedCertificates.numberOfCertificates}} revoked certificates.
+                            </p>
+                            <br>
+                            <a class="btn btn-info" href="lbdetails/{{lbDetails.serviceInstanceId}}/revokedcert/download" ng-disabled="currentRevokedCertificates.vroStatus == 'NOT_SET'"><span class="glyphicon glyphicon glyphicon-cloud-download"></span> {{currentRevokedCertificates.vroStatus == 'NOT_SET'
+                                ? 'No Bundle Uploaded' : 'Download'}}
+                            </a>
+                            <button type="button" class="btn btn-danger" ng-click="openRevokedCertUploadDialog()" ng-disabled="currentRevokedCertificates.vroStatus == 'SYNCHRONIZING'"><span class="glyphicon glyphicon-cloud-upload"></span> Upload Revoked Certificates Bundle
+                            </button>
+                        </div>
+                        <div class="col-md-12">
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+            </div></md-content>
+			</md-tab>
+			<md-tab label="Bound applications" ng-disabled="!(lbDetails.lbaasType == 'APPLICATION')"> 
+				<md-content class="md-padding">
+				
+			<div class="panel panel-info" dw-loading="lbApplications" ng-show="lbDetails.lbaasType == 'APPLICATION'">
+                <div class="panel-heading">Bound Applications</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div ng-show="lbApplications.length == 0">The load balancer is not bound to an application.
+                        </div>
+                        <table class="table table-striped" ng-show="lbApplications.length &gt; 0">
+                            <thead>
+                            <tr>
+                                <th>Application name</th>
+                                <th>Instances</th>
+                                <th>Memory</th>
+                                <th>Disk quota</th>
+                                <th>Routes</th>
+                            </tr>
+                            </thead>
+                            <tbody ng-repeat="app in lbApplications">
+                            <tr>
+                                <td>
+                                    {{app.name}}
+                                </td>
+                                <td>
+                                    {{app.instances}}
+                                </td>
+                                <td>
+                                    {{app.memory}} GB
+                                </td>
+                                <td>
+                                    {{app.diskQuota}} GB
+                                </td>
+                                <td>
+                                    <ul>
+                                        <li ng-repeat="uri in app.uris">{{uri}}</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-12">
+                        <hr>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="pull-right">
+                            <a type="button" class="btn btn-info" ng-click="refreshAppBindings()"><span class="glyphicon glyphicon-repeat"></span> Refresh</a>
+                        </div>
+                    </div>
+                </div>
+            </div></md-content>
+			</md-tab><md-tab label="CF Application Settings" ng-disabled="!(lbDetails.vroStatus == 'PROVISIONED' && lbDetails.lbaasType == 'APPLICATION')"> 
+				<md-content class="md-padding">
+			<div class="panel panel-info" dw-loading="lbdetailsCurrentAppRoute" ng-show="lbDetails.vroStatus == 'PROVISIONED' &amp;&amp; lbDetails.lbaasType == 'APPLICATION'">
+                <div class="panel-heading">Cloud Foundry application settings</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12"><h4>Route for Cloud Foundry applications</h4></div>
+                        <div class="clearfix visible-md-block"></div>
+                        <div class="col-md-12">Choose a route which is used for Cloud Foundry application routing.
+                        </div>
+                        <div class="clearfix visible-md-block"></div>
+                        <div class="col-md-12">
+                            <p>
+                                <img src="assets/img/progress-detail2.gif" ng-show="currentAppRoute.vroStatus == 'SYNCHRONIZING'">
+                                <span class="label label-danger" ng-show="currentAppRoute.vroStatus == 'FAILED'"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Failed</span>
+                                <span class="label label-success" ng-show="currentAppRoute.vroStatus == 'SYNCHRONIZED'"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Synchronized</span>
+                                <span class="label label-default" ng-show="currentAppRoute.vroStatus == 'NOT_SET'"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> No route was set yet.</span>
+                            </p>
+
+                            <form name="chooseRoute" novalidate class="form-inline">
+                                <div class="form-group top10">
+                                    <!--<select class="form-control width160" ng-model="currentAppRoute.route" ng-options="o as o for o in availableRoutes" required>-->
+                                    <!--</select>-->
+                                    <select class="form-control width160" ng-model="currentAppRoute.route" required>
+                                        <option value="" ng-show="!currentAppRoute.route">Not selected</option>
+                                        <option value="{{route}}" ng-repeat="route in availableRoutes" ng-selected="currentAppRoute.route == route">{{route}}</option>
+                                    </select>
+                                    <button type="button" class="btn btn-danger" ng-click="setCurrentAppRoute(currentAppRoute.route)" ng-disabled="!currentAppRoute.route || currentAppRoute.vroStatus == 'SYNCHRONIZING'">Set route</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="clearfix visible-md-block"></div>
+                        <div class="col-md-12">&nbsp;</div>
+                    </div>
+                </div>
+            </div></md-content>
+			</md-tab>
+			<md-tab label="Error info" ng-disabled="!(lbDetails.vroStatus == 'FAILED')"> 
+				<md-content class="md-padding">
+			<div class="panel panel-danger" ng-show="lbDetails.vroStatus == 'FAILED'" dw-loading="lbdetails">
+                <div class="panel-heading">Error info</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-3"><strong>Workflow ID</strong></div>
+                        <div class="col-md-9">{{lbDetails.provisionInfoWorkflowId}}</div>
+                        <div class="clearfix visible-md-block"></div>
+                        <div class="col-md-3"><strong>Start date</strong></div>
+                        <div class="col-md-3">{{lbDetails.provisionInfoStartDate}}</div>
+                        <div class="col-md-3"><strong>End date</strong></div>
+                        <div class="col-md-3">{{lbDetails.provisionInfoEndDate}}</div>
+                        <div class="clearfix visible-md-block"></div>
+                        <div class="col-md-3"><strong>Started by</strong></div>
+                        <div class="col-md-3">{{lbDetails.provisionInfoStartedBy}}</div>
+                        <div class="col-md-3"><strong>Current Item</strong></div>
+                        <div class="col-md-3">{{lbDetails.provisionInfoCurrentItemDisplayName}} &nbsp;</div>
+                        <div class="clearfix visible-md-block"></div>
+                        <div class="col-md-3"><strong>Content exception</strong></div>
+                        <div class="col-md-9">{{lbDetails.provisionInfoContentException}}</div>
+                    </div>
+                </div>
+            </div></md-content>
+ 			</md-tab>
+ 			<!--
+			<md-tab label="TOBEDUP"> 
+				<md-content class="md-padding">
+			</md-content>
+ 			</md-tab>
+ 			-->
+			
+		</md-tabs>
+		</md-content>
+	</div>
+
+    <div class="row multi-columns-row">
+        <div class="col-md-12">
+            
+            
+            
+            
+            
+            
+
+            
+            
+        </div>
+    </div>
+</div>

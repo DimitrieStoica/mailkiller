@@ -1,0 +1,71 @@
+		<div class="panel panel-info" dw-loading="vmLoadBalancers">
+			<div class="panel-heading">Bound Load Balancers</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-xs-12 col-md-12">
+						<div ng-show="vmLoadBalancers.length == 0">No load balancers
+							are bound to this machine.</div>
+						<table class="table table-striped"
+							ng-show="vmLoadBalancers.length > 0">
+							<thead>
+								<tr>
+									<th>Service Instance Name</th>
+									<th>Plan ID</th>
+									<th>External Ports</th>
+									<th>External IP</th>
+									<th>Load Balancing Policy</th>
+									<th>VRO Binding Status</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody ng-repeat="service in vmLoadBalancers">
+								<tr>
+									<td>{{service.serviceInstanceName}}</td>
+									<td>{{service.planId}}</td>
+									<td>{{service.externalPorts}}</td>
+									<td>{{service.externalIp}}</td>
+									<td>{{service.loadBalancingPolicy}}</td>
+									<td><span class="label label-success"
+										ng-show="service.vroBindingStatus == 'BOUND'"><span
+											class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+											Bound</span> <span class="label label-danger"
+										ng-show="service.vroBindingStatus == 'FAILED'"><span
+											class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+											Failed</span> <span class="label label-warning"
+										ng-show="service.vroBindingStatus == 'WAITING_FOR_LB_USER_INPUT'"><span
+											class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+											Waiting for user input (LB)</span> <span class="label label-warning"
+										ng-show="service.vroBindingStatus == 'WAITING_FOR_VM'"><span
+											class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+											Waiting for virtual machine</span> <span class="label label-warning"
+										ng-show="service.vroBindingStatus == 'WAITING_FOR_LB'"><span
+											class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+											Waiting for load balancer</span> <img
+										src="assets/img/progress-vm.gif"
+										ng-show="service.vroBindingStatus == 'BINDING'" /></td>
+									<td><a type="button" class="btn btn-info"
+										href="#/lbdetails/{{service.serviceInstanceId}}"><span
+											class="glyphicon glyphicon-search"></span> Details</a>&nbsp; <a
+										type="button" class="btn btn-danger width160"
+										ng-click="rescheduleLoadBalancerBinding(service)"
+										ng-show="service.vroBindingStatus == 'FAILED'"
+										ng-disabled="service.buttonState.disabled"><span
+											class="glyphicon glyphicon-repeat"></span>
+											{{service.buttonState.label}}</a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-md-12">
+						<hr />
+					</div>
+					<div class="col-md-12">
+						<div class="pull-right">
+							<a type="button" class="btn btn-info"
+								ng-click="refreshLoadBalancerBindings()"><span
+								class="glyphicon glyphicon-repeat"></span> Refresh</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>

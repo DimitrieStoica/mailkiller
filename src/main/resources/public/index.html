@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" class="en" ng-app="MailKillerDashboard">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="Mail Killer Dashboard">
+    <meta name="title" content="Mail Killer Dashboard">
+    <link rel="shortcut icon" href="assets/favicon.ico">
+    <title>Mail Killer Dashboard</title>
+
+    <link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.6/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="webjars/angular-material/1.0.7/angular-material.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/app.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/angular-loading.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/multi-columns-row.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/nv.d3.css">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div ng-include="'assets/templates/header.html'"></div>
+    </div>
+
+    <div id="body" class="row">
+        <ng-view></ng-view>
+    </div>
+
+    <div class="row">
+        <div ng-include="'assets/templates/footer.html'"></div>
+    </div>
+</div>
+<script type="text/javascript" src="webjars/jquery/1.11.1/jquery.min.js"></script>
+
+<script type="text/javascript" src="webjars/angularjs/1.5.7/angular.js"></script>
+<script type="text/javascript" src="webjars/angularjs/1.5.7/angular-resource.js"></script>
+<script type="text/javascript" src="webjars/angularjs/1.5.7/angular-animate.js"></script>
+<script type="text/javascript" src="webjars/angularjs/1.5.7/angular-touch.js"></script>
+<script type="text/javascript" src="webjars/angularjs/1.5.7/angular-route.js"></script>
+<script type="text/javascript" src="webjars/angularjs/1.5.7/angular-messages.js"></script>
+<script type="text/javascript" src="webjars/angularjs/1.5.7/angular-aria.js"></script>
+<script type="text/javascript" src="webjars/angular-material/1.0.9/angular-material.js"></script>
+<script type="text/javascript" src="webjars/angular-ui/0.4.0/angular-ui.js"></script>
+
+<script type="text/javascript" src="webjars/angular-ui-bootstrap/1.2.5/ui-bootstrap.js"></script>
+<script type="text/javascript" src="webjars/angular-ui-bootstrap/1.2.5/ui-bootstrap-tpls.js"></script>
+
+<script type="text/javascript" src="webjars/spin-js/2.1.0/spin.js"></script>
+<script type="text/javascript" src="webjars/bootstrap/3.3.6/js/bootstrap.js"></script>
+<script type="text/javascript" src="assets/js/angular-confirm.js"></script>
+<script type="text/javascript" src="assets/js/svg-assets-cache.js"></script>
+
+<script type="text/javascript" src="assets/js/app.js"></script>
+<script type="text/javascript" src="assets/js/mailkillerservices.js"></script>
+<script type="text/javascript" src="assets/js/info.js"></script>
+<script type="text/javascript" src="assets/js/status.js"></script>
+<script type="text/javascript" src="assets/js/angular-loading.js"></script>
+<script type="text/javascript" src="assets/js/d3.js"></script>
+<script type="text/javascript" src="assets/js/nv.d3.js"></script>
+<script type="text/javascript" src="assets/js/angular-nvd3.js"></script>
+<script type="text/javascript" src="assets/js/monitoring.js"></script>
+</body>
+</html>

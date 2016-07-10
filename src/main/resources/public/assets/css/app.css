@@ -1,0 +1,210 @@
+#body {
+    padding-top: 10px;
+}
+
+.navbar {
+    background-color: white;
+    border: 0;
+    margin-bottom: 20px;
+}
+
+.navbar .container {
+    background-color: #CDCDCD;
+    background-image: -moz-linear-gradient(top, #ECECEC, #DBDBDB);
+    background-image: -ms-linear-gradient(top, #ECECEC, #DBDBDB);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ECECEC), to(#DBDBDB));
+    background-image: -webkit-linear-gradient(top, #ECECEC, #DBDBDB);
+    background-image: -o-linear-gradient(top, #ECECEC, #DBDBDB);
+    background-image: linear-gradient(top, #ECECEC, #DBDBDB);
+}
+.page-header {
+    margin-top: 50px;
+}
+.navbar .navbar-brand {
+    color: rgb(89, 89, 89);
+}
+
+.navbar .navbar-brand:hover {
+    color: white;
+}
+
+.icon-white {
+    color: white;
+}
+
+.container {
+    width: 100%;
+}
+
+.row {
+    margin-right: -5px;
+    margin-left: -5px;
+}
+
+.overlayContainer {
+    display: none;
+}
+.overlayBackground {
+    top:0px;
+    left:0px;
+    padding-left:100px;
+    position:absolute;
+    z-index:1000;
+    height:100%;
+    width:100%;
+    background-color:#DBDBDB;
+    opacity:0.7;
+}
+.overlayContent {
+    position:absolute;
+    border: 1px solid #777;
+    background-color:#fff;
+    font-weight: bold;
+    color: #666;
+    height: 100px;
+    width: 300px;
+    z-index:1000;
+    text-align:center;
+}
+
+input.ng-dirty.ng-invalid {
+    color: #ae0a00;
+    background-color: #ffe6eb;
+}
+
+.top10 {
+    margin-top: 10px;
+}
+
+.width160 {
+    width: 160px;
+}
+
+.col-md-3, .col-md-9 {
+    margin-top: 10px;
+}
+
+.progress {
+    background-color: #D2D0D0;
+    text-align:center;
+    margin-bottom: 0;
+}
+
+.progress-value {
+    position:absolute;
+    right:0;
+    left:0;
+    font-size: 11px;
+    font-weight: bold;
+    color: #FFF;
+    line-height: 20px;
+}
+
+.tree {
+    margin-left: -45px;
+}
+
+.tree li {
+    margin: 0px 0;
+    list-style-type: none;
+    position: relative;
+    padding: 5px 5px 0px 5px;
+}
+
+.tree li::before{
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: 100%;
+    right: auto;
+    left: -20px;
+    border-left: 1px solid #ccc;
+    bottom: 50px;
+}
+.tree li::after{
+    content: '';
+    position: absolute;
+    top: 15px;
+    width: 25px;
+    height: 20px;
+    right: auto;
+    left: -20px;
+    border-top: 1px solid #ccc;
+}
+.tree li a{
+    display: inline-block;
+    border: 1px solid #aaa;
+    background-color: #f5f5f5;
+    padding: 3px 10px;
+    text-decoration: none;
+    color: #333;
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+    font-size: 12px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
+.modal-lg-popup .modal-dialog {
+   	 width: 730px;
+}
+
+.modal-lgb-popup .modal-dialog {
+   	 width: 930px;
+}
+
+
+/*Remove connectors before root*/
+.tree > ul > li::before, .tree > ul > li::after{
+    border: 0;
+}
+/*Remove connectors after last child*/
+.tree li:last-child::before{
+    height: 15px;
+}
+
+/*Time for some hover effects*/
+/*We will apply the hover effect the the lineage of the element also*/
+/*
+.tree li a:hover, .tree li a:hover+ul li a {
+    background: #c8e4f8; color: #000; border: 1px solid #94a0b4;
+}
+.tree li a:hover+ul li::after,
+.tree li a:hover+ul li::before,
+.tree li a:hover+ul::before,
+.tree li a:hover+ul ul::before{
+    border-color:  #94a0b4;
+}
+*/
+/*
+Angular tabs material
+*/
+.tabsDynamicHeight md-content {
+  background-color: transparent !important; 
+}
+.tabsDynamicHeight md-content md-tabs {
+    background: #f6f6f6;
+    border: 1px solid #e1e1e1; 
+}
+.tabsDynamicHeight md-content md-tabs md-tabs-wrapper {
+  background: white; 
+}
+.tabsDynamicHeight md-content h1:first-child {
+    margin-top: 0; 
+}
+
+.odd {
+    background-color: #dddddd;
+    color:black;
+}
+.even {
+    background-color:white;
+    color:black;
+}
+
+[role="tabpanel"] {
+    transition: none;
+}
+
+

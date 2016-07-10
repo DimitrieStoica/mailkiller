@@ -1,0 +1,98 @@
+<div class="panel panel-info"
+	ng-show="vmDetails.vroStatus == 'PROVISIONED'" dw-loading="vmdetails">
+	<div class="panel-heading">Summary</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-md-12">
+				<h4>Identification</h4>
+			</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-md-3">
+				<strong>Name</strong>
+			</div>
+			<div class="col-md-3">{{vmDetails.summaryVmName}}</div>
+			<div class="col-md-3">
+				<strong>Creation Time</strong>
+			</div>
+			<div class="col-md-3">{{vmDetails.summaryVmCreationTime}}</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-md-12">
+				<hr>
+			</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-xs-12 col-md-12">
+				<h4>Network</h4>
+			</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-md-3">
+				<strong>Network Label</strong>
+			</div>
+			<div class="col-md-3">{{vmDetails.summaryNetworkLabel}}</div>
+			<div class="col-md-3">&nbsp;</div>
+			<div class="col-md-3">&nbsp;</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-md-3">
+				<strong>Internal IP</strong>
+			</div>
+			<div class="col-md-3">{{vmDetails.summaryInternalIp}}</div>
+			<div class="col-md-3">
+				<strong>Internal Hostname</strong>
+			</div>
+			<div class="col-md-3">{{vmDetails.summaryInternalHostName}}</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-md-3">
+				<strong>External IP</strong>
+			</div>
+			<div class="col-md-3">{{vmDetails.summaryExternalIp}}</div>
+			<div class="col-md-3">
+				<strong>External Hostname</strong>
+			</div>
+			<div class="col-md-3">{{vmDetails.summaryExternalHostName}}</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-xs-12 col-md-12">
+				<hr>
+			</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-xs-12 col-md-12">
+				<h4>Credentials</h4>
+			</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-md-3">
+				<strong>Username</strong>
+			</div>
+			<div class="col-md-3">{{vmDetails.summaryUserName}}</div>
+			<div class="col-md-3">
+				<strong>Initial Password</strong>
+			</div>
+			<div class="col-md-3">{{vmDetails.summaryPassword}}</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-xs-12 col-md-12">
+				<hr>
+			</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-xs-12 col-md-12">
+				<h4>Application Security Rules</h4>
+			</div>
+			<div class="clearfix visible-md-block"></div>
+			<div class="col-xs-12 col-md-12">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Protocol</th>
+							<th>Destination CIDR</th>
+							<th>Ports</th>
+						</tr>
+					</thead>
+					<tbody
+						ng-repeat="rule in vmDetails.summaryApplicationSecurityRules">
+						<tr>
+							<td>{{rule.protocol}}</td>
+							<td>{{rule.destinationCIDR}}</td>
+							<td>{{rule.ports}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

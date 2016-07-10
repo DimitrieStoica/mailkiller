@@ -1,0 +1,109 @@
+
+<div class="panel panel-info" dw-loading="vmBindableApplication">
+	<div class="panel-heading">
+		Bindable application <span class="label label-success pull-right"
+			ng-show="vmBindableApplication.status == 'CREATED'"><span
+			class="glyphicon glyphicon-ok" aria-hidden="true"></span> Bindable
+			application created</span> <span class="label label-warning pull-right"
+			ng-show="vmBindableApplication.status == 'MISSING'"><span
+			class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+			Bindable application not created</span>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-xs-12 col-md-12">
+				<div
+					ng-show="vmBindableApplication.boundServices.length == 0 && (vmDetails.vroStatus == 'PROVISIONING' || vmDetails.vroStatus == 'UNPROVISIONING')">
+					After successful provision of the virtual machine the application
+					bindings will be synchronized.</div>
+				<div
+					ng-show="vmBindableApplication.boundServices.length == 0 && vmDetails.vroStatus == 'PROVISIONED'">
+					No services are bound to the application.</div>
+				<table class="table table-striped"
+					ng-show="vmBindableApplication.boundServices.length > 0">
+					<thead>
+						<tr>
+							<th>Service Instance Name</th>
+							<th>Service Label</th>
+							<th>Binding Handler</th>
+							<th>IPs</th>
+							<th>Port</th>
+							<th>User provided</th>
+							<th>Status</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody
+						ng-repeat="service in vmBindableApplication.boundServices | orderBy:sortField:sortDescending">
+						<tr>
+							<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">{{service.serviceInstanceName}}</td>
+							<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">{{service.serviceLabel}}</td>
+							<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">{{service.bindingHandlerName}}</td>
+							<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">
+								<p ng-repeat="ip in service.ips">
+									{{ip}} <span ng-show="service.bindingType == 'VIRTUAL_MACHINE'">({{service.boundVirtualMachineName}})</span>
+								</p>
+							</td>
+							<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">{{service.port}}</td>
+							<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">
+								{{service.userProvided}}</td>
+							<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}"><span
+								class="label label-success" ng-show="service.status == 'BOUND'"><span
+									class="glyphicon glyphicon-ok" aria-hidden="true"></span> Bound</span>
+								<span class="label label-danger"
+								ng-show="service.status == 'FAILED'"><span
+									class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+									Failed</span> <span class="label label-danger"
+								ng-show="service.status == 'FORBIDDEN'"><span
+									class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+									Forbidden</span> <span class="label label-default"
+								ng-show="service.status == 'NOT_SUPPORTED'"><span
+									class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+									Not supported</span> <img src="assets/img/progress-vm.gif"
+								ng-show="service.status == 'BINDING' || service.status == 'UPDATE_BINDING'" />
+							</td>
+							<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}"><a
+								type="button" class="btn btn-danger width160"
+								ng-click="rescheduleVmBinding(service)"
+								ng-show="service.status == 'FAILED' || service.status == 'FORBIDDEN'"
+								ng-disabled="service.buttonState.disabled"><span
+									class="glyphicon glyphicon-repeat"></span>
+									{{service.buttonState.label}}</a></td>
+						</tr>
+						<tr
+							data-ng-show="service.userProvided && service.vmToVmBindingStatus != null && service.vmToVmSourceInvite != null">
+							<td colspan="7" align="right"
+								class="{{$index % 2 == 0 ? 'odd' : 'even'}}">This user
+								provided service is related to the <span
+								class="label label-success"
+								data-ng-show="service.vmToVmBindingStatus == 'ACCEPTED'">{{service.vmToVmBindingStatus}}</span>
+								<span class="label label-danger"
+								data-ng-show="service.vmToVmBindingStatus == 'REJECTED'">{{service.vmToVmBindingStatus}}</span>
+								invitation <b><i>"{{service.vmToVmSourceInvite}}"</i></b>
+							</td>
+							<td colspan="4" class="{{$index % 2 == 0 ? 'odd' : 'even'}}"></td>
+						</tr>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-xs-12 col-md-12">
+				<hr />
+			</div>
+			<div class="col-xs-12 col-md-12">
+				<div class="pull-right">
+					<a type="button" class="btn btn-info"
+						ng-click="refreshApplicationBindings()"><span
+						class="glyphicon glyphicon-repeat"></span> Refresh</a>&nbsp; <a
+						type="button" class="btn btn-primary"
+						ng-show="vmBindableApplication.status == 'MISSING'"
+						ng-click="createBindableApplication()">Create bindable
+						application</a> <a type="button" class="btn btn-danger"
+						ng-show="vmBindableApplication.status == 'CREATED'"
+						ng-click="deleteBindableApplication()">Delete bindable
+						application</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

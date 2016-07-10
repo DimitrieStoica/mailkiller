@@ -1,0 +1,90 @@
+<div id="vmservices" ng-init="init()">
+    <div class="page-header">
+        <h3>Virtual Machine Services</h3>
+        <div>
+            <span> [ sort by: </span>
+            <a href="" ng-click="sortField='serviceInstanceName'">service instance name</a> |
+            <a href="" ng-click="sortField='serviceId'">service id</a> |
+            <a href="" ng-click="sortField='planId'">plan id</a> |
+            <a href="" ng-click="sortField='vroStatus'">vro status</a> |
+            <a href="" ng-click="sortDescending=!sortDescending">
+                <span class="glyphicon" ng-class="{'glyphicon-chevron-up' : !sortDescending, 'glyphicon-chevron-down' : sortDescending}"></span>
+            </a>
+            <span> ] </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div ng-include src="'assets/templates/status.html'"></div>
+    </div>
+
+    <div class="row multi-columns-row" dw-loading="vmservices">
+        <div class="col-xs-12">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Service Instance Name</th>
+                    <th>Service ID</th>
+                    <th>Plan ID</th>
+                    <th>Plan OS</th>
+                    <th>Plan CPU Count</th>
+                    <th>Plan Mem. Size</th>
+                    <th>Plan Disk</th>
+                    <th>Power State</th>
+                    <th>VRO Status</th>
+                    <th>Created at</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="service in vmServices | orderBy:sortField:sortDescending">
+                <tr>
+                    <td>
+                        {{service.serviceInstanceName}}
+                    </td>
+                    <td>
+                        {{service.serviceId}}
+                    </td>
+                    <td>
+                        {{service.planId}}
+                    </td>
+                    <td>
+                        {{service.planOperatingSystem}}
+                    </td>
+                    <td>
+                        {{service.planCpuCount}}
+                    </td>
+                    <td>
+                        {{service.planMemorySize}}
+                    </td>
+                    <td>
+                        {{service.planDisk}}
+                    </td>
+                    <td>
+                        <div ng-hide="service.vroStatus == 'FAILED'">
+                            <span class="label label-success" ng-show="service.powerState == 'POWERED_ON'"><span
+                                    class="glyphicon glyphicon-play" aria-hidden="true"></span> Powered On</span>
+                            <span class="label label-danger" ng-show="service.powerState == 'POWERED_OFF'"><span
+                                    class="glyphicon glyphicon-stop" aria-hidden="true"></span> Powered Off</span>
+                            <span class="label label-warning" ng-show="service.powerState == 'CHANGING_STATE'"><span
+                                    class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Waiting for power state</span>
+                        </div>
+                    </td>
+                    <td>
+
+                        <span class="label label-success" ng-show="service.vroStatus == 'PROVISIONED'"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Provisioned</span>
+                        <span class="label label-danger" ng-show="service.vroStatus == 'FAILED'"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Failed</span>
+                        <span class="label label-danger" ng-show="service.vroStatus == 'UPDATE_FAILED'"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Update failed</span>
+                        <img src="assets/img/progress-vm.gif" ng-show="service.vroStatus == 'PROVISIONING' || service.vroStatus == 'UNPROVISIONING' || service.vroStatus == 'UPDATING'"/>
+                    </td>
+                    <td>
+                        {{service.createdAt}}
+                    </td>
+                    <td>
+                        <a type="button" class="btn btn-info" href="#/vmdetails/{{service.serviceInstanceId}}"><span class="glyphicon glyphicon-search"></span> Details</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

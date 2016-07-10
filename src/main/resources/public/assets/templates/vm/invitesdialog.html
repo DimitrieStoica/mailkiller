@@ -1,0 +1,72 @@
+<div class="modal-header">
+	<h4 class="modal-title">
+		<span data-ng-hide="loadingInvites">Invites</span>
+		<span data-ng-show="loadingInvites">
+			Loading invite list... please wait 
+			<i class="fa fa-spinner fa-spin"></i>
+		</span>
+	</h4>
+</div>
+<div class="modal-body" style="overflow: auto; max-height: 550px;">
+	<table class="table table-striped" ng-show="invites.length > 0">
+		<thead>
+			<tr>
+				<th>Description</th>
+				<th>Space</th>
+				<th>Host</th>
+				<th>Port</th>
+				<th>Status</th>
+				<th></th>
+			</tr>
+		</thead>
+			<tr ng-repeat="invite in invites | orderBy : '-createdDate'">
+				<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">
+					<span ng-show="invite.status != 'PENDING'">{{invite.description}}</span>
+					<a href ng-click="generateEmail(invite)" ng-show="invite.status == 'PENDING'">
+						{{invite.description}}
+					</a>
+				</td>
+				<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">{{displayNull(invite.space)}}</td>
+				<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">{{displayNull(invite.host)}}</td>
+				<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">{{displayNull(invite.port)}}</td>
+				<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">
+					<a type="button" class="btn btn-sm btn-warning" ng-click="generateEmail(invite)" ng-show="invite.status == 'PENDING'">
+						<span class="glyphicon glyphicon-question-sign" aria-hidden="true">&nbsp;</span>{{getStatus(invite)}}
+					</a>
+					<span class="label label-danger" ng-show="invite.status == 'REJECTED'">
+						<span class="glyphicon glyphicon-remove" aria-hidden="true">&nbsp;</span>{{getStatus(invite)}}
+					</span>
+					<span class="label label-success" ng-show="invite.status == 'ACCEPTED'">
+						<span class="glyphicon glyphicon-ok" aria-hidden="true">&nbsp;</span>{{getStatus(invite)}}
+					</span>
+				</td>
+				<td class="{{$index % 2 == 0 ? 'odd' : 'even'}}">
+					<div class="btn-group">
+						<label class="btn btn-warning" confirm="Drop Invite ?" ng-click="dropInvite(invite)">Drop</label>
+					</div>
+				</td>
+			</tr>
+	</table>
+</div>
+<div class="modal-footer" id="createInviteDiv">
+	<table width="100%">
+	<tr>
+		<td>
+			<span class="col-xs-12 col-md-12">
+				<div class="pull-left">
+					<button class="btn btn-primary pull-left" type="button" ng-click="createInvite()">
+						<span class="glyphicon glyphicon-record"></span> Create
+					</button>&nbsp;
+				</div>
+			</span>
+		</td>
+		<td>
+			<span class="col-xs-12 col-md-12">
+			    <button class="btn btn-default" type="button" ng-click="close()">
+					<span class="glyphicon glyphicon-log-out"></span> Close
+			    </button>
+			</span>
+		</td>
+	</tr>
+</table>
+</div>

@@ -34,7 +34,7 @@ public class POP3MailRetrieverScheduler {
 
 	@Scheduled(initialDelay = 2000, fixedDelay = 60000) // 60s between each run
     public void retrieveMails() {
-		List<POP3EmailAccount> pop3Accounts = emailAccountService.getValidPOP3Account();
+		List<POP3EmailAccount> pop3Accounts = emailAccountService.getValidPOP3Accounts();
 		for(POP3EmailAccount account : pop3Accounts) {
 			pop3Retriever.retrieveMailsFor(account);
 		}

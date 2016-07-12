@@ -1,4 +1,4 @@
-package org.telaside.mailkiller.checker;
+package org.telaside.mailkiller.domain;
 
 public enum EmailCheckerStatus {
 	CLEAR("CLEAR"),

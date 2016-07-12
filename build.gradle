@@ -33,9 +33,9 @@ dependencies {
 	
 	compile group: 'org.webjars', name: 'angularjs', version: '1.5.7'
 	compile group: 'org.webjars', name: 'bootstrap', version: '3.3.6'
-	compile group: 'org.webjars', name: 'angular-material', version: '1.0.9'
 	compile group: 'org.webjars', name: 'angular-ui', version: '0.4.0'
 	compile group: 'org.webjars', name: 'angular-ui-bootstrap', version: '1.2.5'
+	compile group: 'org.webjars', name: 'ui-grid', version: '3.1.1'
 	compile group: 'org.webjars', name: 'spin-js', version: '2.1.0'
 	
 	

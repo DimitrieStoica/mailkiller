@@ -1,13 +1,14 @@
 package org.telaside.mailkiller.checker;
 
-import static org.telaside.mailkiller.checker.EmailCheckerStatus.PROBABLY_SPAM;
-import static org.telaside.mailkiller.checker.EmailCheckerStatus.UNKNOWN;
+import static org.telaside.mailkiller.domain.EmailCheckerStatus.PROBABLY_SPAM;
+import static org.telaside.mailkiller.domain.EmailCheckerStatus.UNKNOWN;
 
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.telaside.mailkiller.domain.EmailCheckerStatus;
 import org.telaside.mailkiller.domain.EmailReceived;
 
 @Service

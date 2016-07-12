@@ -33,6 +33,7 @@ public class POP3MailRetriever {
 	
     public void retrieveMailsFor(EmailAccount emailAccount) {
     	try {
+    		int totalNew = 0;
 	    	LOG.info("Retrieve emails");
 	    	POP3Client pop3Client = new POP3Client();
 	    	LOG.info("Login into pop3 server");
@@ -41,18 +42,26 @@ public class POP3MailRetriever {
 	    	LOG.info("connected...");
 	    	POP3MessageInfo[] messageInfos = pop3Client.listMessages();
 	    	if(messageInfos != null) {
+	    		LOG.info("{} email(s) present in pop3 server {}", messageInfos.length, emailAccount.getRemoteServer());
 		    	for(POP3MessageInfo messageInfo : messageInfos) {
 		    		Reader message = pop3Client.retrieveMessageTop(messageInfo.number, 0);
-		    		EmailReceived receivedMessage = retrieveMessage(message);
-		    		if(emailService.emailExist(receivedMessage)) {
-		    			LOG.debug("Message {} already there", receivedMessage.getMessageId());
-		    			continue;
+		    		if(message != null) {
+			    		EmailReceived receivedMessage = retrieveMessage(message);
+			    		if(emailService.emailExist(receivedMessage)) {
+			    			LOG.debug("Message {} already there", receivedMessage.getMessageId());
+			    			continue;
+			    		}
+			    		message = pop3Client.retrieveMessage(messageInfo.number);
+			    		if(message != null) {
+			    			receivedMessage = retrieveMessage(message);
+			    			receivedMessage.assignReceivedFields(emailAccount);
+			    			if(emailService.saveIfNew(receivedMessage)) {
+			    				totalNew++;
+			    			}
+			    		}
 		    		}
-		    		message = pop3Client.retrieveMessage(messageInfo.number);
-		    		receivedMessage = retrieveMessage(message);
-		    		receivedMessage.assignReceivedFields(emailAccount);
-			    	emailService.saveIfNew(receivedMessage);
 		    	}
+		    	LOG.info("Total new email(s) is {} for {}", totalNew, emailAccount.getRemoteServer());
 	    	}
     	} catch(Exception e) {
     		LOG.error("Error while retrieving emails", e);

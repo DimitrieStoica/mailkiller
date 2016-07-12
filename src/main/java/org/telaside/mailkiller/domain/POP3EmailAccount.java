@@ -7,4 +7,8 @@ import javax.persistence.Entity;
 @DiscriminatorValue("POP3")
 public class POP3EmailAccount extends EmailAccount {
 
+	@Override
+	public String getAccountType() {
+		return "POP3";
+	}
 }

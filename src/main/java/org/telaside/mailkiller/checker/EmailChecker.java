@@ -3,7 +3,7 @@ package org.telaside.mailkiller.checker;
 import org.telaside.mailkiller.domain.EmailReceived;
 
 public interface EmailChecker {
-	EmailCheckerStatus checkEmail(EmailReceived email) throws Exception;
+	void checkEmail(EmailReceived email, EmailCheckerDiagnostic diagnostic) throws Exception;
 	String checkerName();
 	int priority();
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telaside.mailkiller.domain.EmailAccount;
 import org.telaside.mailkiller.domain.EmailAccountRepository;
+import org.telaside.mailkiller.domain.EmailKillerUser;
 import org.telaside.mailkiller.domain.POP3EmailAccount;
 
 @Service
@@ -21,7 +22,11 @@ public class EmailAccountService {
 		return accountRepository.findByEmailAddress(emailAddress);
 	}
 
-	public List<POP3EmailAccount> getValidPOP3Account() {
-		return accountRepository.getValidPOP3Account();
+	public List<POP3EmailAccount> getValidPOP3Accounts() {
+		return accountRepository.getValidPOP3Accounts();
+	}
+	
+	public List<EmailAccount> getValidAccountsFor(EmailKillerUser user) {
+		return accountRepository.getValidAccountsFor(user);
 	}
 }

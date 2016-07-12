@@ -24,7 +24,6 @@ import javax.persistence.Transient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.telaside.mailkiller.checker.EmailCheckerStatus;
 
 import com.google.common.base.MoreObjects;
 
@@ -178,7 +177,7 @@ public class EmailReceived {
 				setMessageDate(sdf.parse(stringDate));
 				return;
 			} catch(ParseException e) {
-				LOG.error("Cannot parse {} with {} - trying different format", stringDate, format);
+				LOG.debug("Cannot parse {} with {} - trying different format", stringDate, format);
 			}
 		}
 		LOG.error("No format availale for {}. setting date to 0", stringDate);

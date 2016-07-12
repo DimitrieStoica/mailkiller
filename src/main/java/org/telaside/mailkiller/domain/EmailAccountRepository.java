@@ -10,5 +10,8 @@ public interface EmailAccountRepository extends CrudRepository<EmailAccount, Lon
 	EmailAccount findByEmailAddress(String emailAddress);
 
 	@Query("select a from POP3EmailAccount a")
-	List<POP3EmailAccount> getValidPOP3Account();
+	List<POP3EmailAccount> getValidPOP3Accounts();
+
+	@Query("select a from EmailAccount a where a.user = ?1")
+	List<EmailAccount> getValidAccountsFor(EmailKillerUser user);
 }

@@ -32,14 +32,15 @@
     color: white;
 }
 
+/*
 .container {
     width: 100%;
 }
-
 .row {
     margin-right: -5px;
     margin-left: -5px;
 }
+*/
 
 .overlayContainer {
     display: none;

@@ -1,0 +1,80 @@
+<style>
+.ntable-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #85929E;
+}
+.ntable-striped-alert > tbody > tr:nth-of-type(odd) {
+  background-color: tomato;
+}
+.ntable-striped-ok > tbody > tr:nth-of-type(odd) {
+  background-color: mediumseagreen;
+}
+.ntable-striped-grey > tbody > tr:nth-of-type(odd) {
+  background-color: steelblue;
+}
+.tile_alert {
+  background-color: tomato;
+}
+.tile_ok {
+  background-color: mediumseagreen;
+}
+.tile_grey {
+  background-color: steelblue;
+}
+</style>
+
+<div id="home" ng-init="init()" class="container">
+	<div class="row">
+		<uib-tabset active="active"> 
+		<uib-tab index="$index + 1"
+			ng-repeat="account in stats.statsPerAccounts"
+			heading="{{account.accountType + ' ' + account.accountName}}">
+		<div class="row">
+			<br />
+			<div class="row top_tiles">
+				<div class="flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12" ng-repeat="stat in account.stats">
+					<div style="cursor:pointer" ng-class="{'tile-stats tile_grey' : stat.status == 'UNKNOWN', 'tile-stats tile_alert' : stat.status == 'CERTAINLY_SPAM', 'tile-stats tile_ok' : stat.status == 'CLEAR'}" ng-click="loadEmailsFor(account, stat.status)">
+						<div class="icon">
+							<i ng-class="getIconClassFor(stat.status)" aria-hidden="true"></i>
+						</div>
+						<div class="count">{{stat.count}}</div>
+						<h3>{{getShortStatusFor(stat.status)}}</h3>
+						<p>{{getLongStatusFor(stat.status)}}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="raw" ng-hide="tableParams == null">
+	<i ng-class="getIconClassFor(currentStatus)" aria-hidden="true"></i> 
+	<label>
+	Displaying "{{getShortStatusFor(currentStatus)}}" {{totalReceived}} email(s).
+	</label>
+	</div>
+	<br/>
+	<div class="row" ng-hide="tableParams == null">
+		<table ng-table="tableParams" ng-class="{
+		'table table-condensed table-bordered table-hover ntable-striped-grey' : currentStatus == 'UNKNOWN', 
+		'table table-condensed table-bordered table-hover ntable-striped-alert' : currentStatus == 'CERTAINLY_SPAM', 
+		'table table-condensed table-bordered table-hover ntable-striped-ok' : currentStatus == 'CLEAR'
+		}">
+			<tr ng-repeat="email in $data" style="cursor:pointer;">
+				<td title="'#'">
+				
+				</td>
+				<td title="'Received'" sortable="'messageDate'">
+					{{newDate(email.messageDate)}}
+				</td>
+				<td title="'From'" sortable="'headerFrom'">
+					{{display(email.headerFrom)}}
+				</td>
+				<td title="'Subject'" sortable="'subject'">
+				{{display(email.subject)}}
+				</td>
+			</tr>
+		</table>
+	</div>
+	</uib-tab>
+	
+	</uib-tabset>
+</div>

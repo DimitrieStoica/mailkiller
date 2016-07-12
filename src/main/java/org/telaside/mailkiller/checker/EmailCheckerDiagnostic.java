@@ -1,25 +1,27 @@
 package org.telaside.mailkiller.checker;
 
+import org.telaside.mailkiller.domain.EmailCheckerStatus;
+
 public class EmailCheckerDiagnostic {
-	private EmailCheckerStatus status;
-	private String checkerName;
-	private int checkerPriority;
+	private EmailCheckerStatus status = EmailCheckerStatus.UNKNOWN;
+	private StringBuffer diagnostic = new StringBuffer();
 	
-	public EmailCheckerDiagnostic(EmailCheckerStatus status, String checkerName, int checkerPriority) {
-		this.status = status;
-		this.checkerName = checkerName;
-		this.checkerPriority = checkerPriority;
+	public EmailCheckerDiagnostic() {
 	}
 	
 	public EmailCheckerStatus getStatus() {
 		return status;
 	}
-	public String getCheckerName() {
-		return checkerName;
+
+	public void append(String diagnostic) {
+		this.diagnostic.append(diagnostic).append("\n");
 	}
-	public int getCheckerPriority() {
-		return checkerPriority;
+
+	public void status(EmailCheckerStatus status) {
+		this.status = status;
 	}
-	
-	
+
+	public String diagnostic() {
+		return diagnostic.toString();
+	}
 }

@@ -1,12 +1,15 @@
 package org.telaside.mailkiller.domain;
 
+import static com.google.common.base.MoreObjects.toStringHelper;
+import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
+
 import java.util.List;
 import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
@@ -23,13 +26,13 @@ import javax.persistence.Table;
 @Table(name="email_account", 
 	indexes = @Index(name = "acc_login_idx", columnList = "acc_login")
 )
-public class EmailAccount {
+public abstract class EmailAccount {
 	@Id
     @GeneratedValue
     @Column(name = "id", columnDefinition = "bigint unsigned")
 	private Long id;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=EAGER)
 	@JoinColumn(name="user_id")
 	private EmailKillerUser user;
 	
@@ -45,7 +48,7 @@ public class EmailAccount {
 	@Column(name = "acc_remote_server", nullable = false, length = 255)
 	private String remoteServer;
 	
-	@OneToMany(mappedBy="emailAccount")
+	@OneToMany(mappedBy="emailAccount", fetch=LAZY)
 	List<EmailReceived> emails;
 	
 	public Long getId() {
@@ -92,6 +95,14 @@ public class EmailAccount {
 	}
 	public void setUid(String uid) {
 		this.uid = uid;
+	}
+	
+	abstract public String getAccountType();
+	
+	public String toString() {
+		return toStringHelper(this)
+				.add("login", login)
+				.toString();
 	}
 
 }

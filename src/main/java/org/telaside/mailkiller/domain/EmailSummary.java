@@ -1,19 +1,22 @@
 package org.telaside.mailkiller.domain;
 
-import static java.nio.charset.Charset.forName;
-
-import java.nio.charset.Charset;
 import java.util.Date;
+
+import javax.mail.internet.MimeUtility;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmailSummary {
 	
-	static private final String UTF_8_MARKER = "=?UTF-8?"; 
 	private String headerFrom;
 	private String subject;
 	private String internalMessageId;
 	private Date messageDate;
 	private EmailCheckerStatus diagnostic;
 	private EmailStatus status;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(EmailSummary.class);
 	
 	public EmailSummary() {}
 	
@@ -27,10 +30,12 @@ public class EmailSummary {
 	}
 	
 	private String utf8(String header) {
-		if(header != null && header.toUpperCase().startsWith(UTF_8_MARKER)) {
-			String utf8 = header.substring(UTF_8_MARKER.length());
-			String newHeader = new String(utf8.getBytes(), forName("UTF-8"));
-			return newHeader;
+		if(header != null) {
+			try {
+				return MimeUtility.decodeText(header);
+			} catch(Exception e) {
+				LOG.error("Cannot decode {}", header);
+			}
 		}
 		return header;
 	}

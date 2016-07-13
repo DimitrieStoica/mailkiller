@@ -1,4 +1,4 @@
-package org.telaside.mailkiller.protocols.pop3.server;
+package org.telaside.mailkiller.protocols.server.pop3;
 
 import java.net.ServerSocket;
 import java.net.Socket;

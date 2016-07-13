@@ -22,6 +22,10 @@ public class EmailAccountService {
 		return accountRepository.findByEmailAddress(emailAddress);
 	}
 
+	public List<EmailAccount> getValidEmailAccounts() {
+		return accountRepository.getValidEmailAccounts();
+	}
+
 	public List<POP3EmailAccount> getValidPOP3Accounts() {
 		return accountRepository.getValidPOP3Accounts();
 	}

@@ -37,7 +37,7 @@ dependencies {
 	compile group: 'org.webjars', name: 'angular-ui-bootstrap', version: '1.2.5'
 	compile group: 'org.webjars', name: 'ui-grid', version: '3.1.1'
 	compile group: 'org.webjars', name: 'spin-js', version: '2.1.0'
-	
+	compile group: 'javax.mail', name: 'mail', version: '1.4.7'
 	
 	runtime('mysql:mysql-connector-java')
 	compile('org.springframework.session:spring-session')

@@ -14,4 +14,7 @@ public interface EmailAccountRepository extends CrudRepository<EmailAccount, Lon
 
 	@Query("select a from EmailAccount a where a.user = ?1")
 	List<EmailAccount> getValidAccountsFor(EmailKillerUser user);
+
+	@Query("select a from EmailAccount a")
+	List<EmailAccount> getValidEmailAccounts();
 }

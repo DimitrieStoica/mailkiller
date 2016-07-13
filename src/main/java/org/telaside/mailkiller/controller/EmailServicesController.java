@@ -3,11 +3,14 @@ package org.telaside.mailkiller.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +49,25 @@ public class EmailServicesController {
 			LOG.info("Received {}", emailsPerStatus);
 		}
 		return globalStatsDTO;
+	}
+	
+	@RequestMapping(path="/mailstat/{account}/stats", method=RequestMethod.GET)
+	public List<EmailAccountStatus> statsFor(@PathVariable String account) {
+		EmailAccount emailAccount = emailAccountService.findByEmailAddress(account);
+		List<EmailAccountStatus> emailsPerStatus = emailReceivedService.getEmailsPerStatus(emailAccount);
+		return emailsPerStatus;
+	}
+	
+	@RequestMapping(path="/actonemails/{action}", method=RequestMethod.POST)
+	public void actOnEmails(@PathVariable String action, @RequestBody List<String> messageIds) {
+		LOG.info("{} on {}", action, messageIds);
+		if(messageIds == null || messageIds.size() == 0 || action == null) {
+			return;
+		}
+		EmailKillerUser user = emailUserContextProvider.contextEmailKillerUser();
+		if("clear".equals(action)) {
+			emailReceivedService.clearEmails(user, messageIds);
+		}
 	}
 	
 	@RequestMapping(path="/emailsfor/{account}/status/{status}", method=RequestMethod.GET)

@@ -29,7 +29,6 @@ public class EmailReceivedService {
 	@Autowired
 	private EmailAccountRepository emailAccountRepository;
 
-	
 	public void markToBeDeleted(EmailReceived receivedMessage) {
 		receivedMessage.setStatus(EmailStatus.TO_BE_DELETED);
 		emailReceivedRepository.save(receivedMessage);
@@ -68,5 +67,9 @@ public class EmailReceivedService {
 	public List<EmailSummary> emailSummaries(EmailKillerUser user, String emailAddress, EmailCheckerStatus status) {
 		EmailAccount account = emailAccountRepository.findByEmailAddress(emailAddress);
 		return emailReceivedRepository.findSummariesFor(user, account, status);
+	}
+
+	public void clearEmails(EmailKillerUser user, List<String> messageIds) {
+		emailReceivedRepository.updateEmailCheckerStatus(EmailCheckerStatus.CLEAR.toString(), /*user, */ messageIds);
 	}
 }

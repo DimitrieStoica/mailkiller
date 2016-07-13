@@ -1,4 +1,4 @@
-package org.telaside.mailkiller.protocols.pop3.client;
+package org.telaside.mailkiller.protocols.client.pop3;
 
 import static org.telaside.mailkiller.domain.MailHeaderPrefix.H_DATE;
 import static org.telaside.mailkiller.domain.MailHeaderPrefix.H_DATE_LENGTH;
@@ -21,10 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telaside.mailkiller.domain.EmailAccount;
 import org.telaside.mailkiller.domain.EmailReceived;
+import org.telaside.mailkiller.protocols.client.EmailRetriever;
 import org.telaside.mailkiller.service.EmailReceivedService;
 
 @Service
-public class POP3MailRetriever {
+public class POP3MailRetriever implements EmailRetriever {
 	
 	private final static Logger LOG = LoggerFactory.getLogger(POP3MailRetriever.class);
 	
@@ -103,5 +104,10 @@ public class POP3MailRetriever {
 			}
 		}
 		return receivedMessage;
+	}
+
+	@Override
+	public boolean canHandle(String type) {
+		return "POP3".equals(type);
 	}
 }

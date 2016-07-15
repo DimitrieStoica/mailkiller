@@ -4,6 +4,6 @@ import org.telaside.mailkiller.domain.EmailReceived;
 
 public interface EmailChecker {
 	void checkEmail(EmailReceived email, EmailCheckerDiagnostic diagnostic) throws Exception;
-	String checkerName();
-	int priority();
+	String name();
+	EmailCheckerPriority priority();
 }

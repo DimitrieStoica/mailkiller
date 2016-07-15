@@ -9,6 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -71,6 +73,9 @@ public class EmailReceived {
 
     @Column(name = "h_from", length = 255)
 	private String headerFrom;
+    
+    @Column(name = "i_domain", length = 255)
+    private String domain;
     
     @Column(name = "i_from", length = 255)
 	private String from;
@@ -155,6 +160,13 @@ public class EmailReceived {
 		//LOG.info("Full message is {}", new String(rawEmail));
 		return new CharArrayReader(this.rawEmail == null ? new char[0] : this.rawEmail);
 	}
+	
+	public String getDomain() {
+		return domain;
+	}
+	public void setDomain(String domain) {
+		this.domain = domain;
+	}
 
 	public EmailCheckerStatus getDiagnostic() {
 		return diagnostic;
@@ -184,20 +196,28 @@ public class EmailReceived {
 		setMessageDate(new Date(0));
 	}
 	
-	public void assignFromFields(String from) {
-		this.setHeaderFrom(from);
-		this.setFrom(fromInternetAddress());
+	public void assignFromFields(String headerFrom) {
+		setHeaderFrom(headerFrom);
+		setFromAndDomain(headerFrom);
 	}
 	
-	public String fromInternetAddress() {
-		int start = headerFrom.lastIndexOf('<');
+	protected void setFromAndDomain(String newHeaderFrom) {
+		try {
+		int start = newHeaderFrom.lastIndexOf('<');
 		if(start == -1) {
-			return headerFrom.trim();
+			this.from = newHeaderFrom.trim();
+		} else {
+			int end = newHeaderFrom.lastIndexOf('>');
+			this.from = newHeaderFrom.substring(start + 1, end);
 		}
-		int end = headerFrom.lastIndexOf('>');
-		return headerFrom.substring(start + 1, end);
+		domain = from.split("@")[1];
+		} catch(Exception e) {
+			domain = null;
+			from = null;
+			LOG.error("Cannot extract 'from' and 'domain' from {}", newHeaderFrom);
+		}
 	}
-	
+		
 	public int messageSize() {
 		return rawEmail == null ? 0 : rawEmail.length;
 	}

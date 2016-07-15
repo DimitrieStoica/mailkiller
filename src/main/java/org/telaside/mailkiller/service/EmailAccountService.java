@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.telaside.mailkiller.domain.EmailAccount;
-import org.telaside.mailkiller.domain.EmailAccountRepository;
 import org.telaside.mailkiller.domain.EmailKillerUser;
 import org.telaside.mailkiller.domain.POP3EmailAccount;
+import org.telaside.mailkiller.domain.repository.EmailAccountRepository;
 
 @Service
 @Transactional

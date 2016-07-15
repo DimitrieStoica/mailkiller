@@ -24,7 +24,7 @@ public class EmailRetrieverScheduler {
 	
 	static private final Logger LOG = LoggerFactory.getLogger(EmailRetrieverScheduler.class);
 	
-	@Value("${pop3.thread-pool.size:4}")
+	@Value("${emailretrieve.thread-pool.size:4}")
 	private int poolSize;
 	
 	@Autowired
@@ -58,6 +58,7 @@ public class EmailRetrieverScheduler {
 				}
 			}
 		}
+		
 		for(Future<Object> future : futures) {
 			try {
 				future.get();

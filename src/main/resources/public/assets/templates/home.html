@@ -33,7 +33,7 @@
 			<br />
 			<div class="row top_tiles">
 				<div class="flipInY col-lg-3 col-md-3 col-sm-6 col-xs-12" ng-repeat="stat in account.stats">
-					<div style="cursor:pointer" ng-class="{'tile-stats tile_grey' : stat.status == 'UNKNOWN', 'tile-stats tile_alert' : stat.status == 'CERTAINLY_SPAM', 'tile-stats tile_ok' : stat.status == 'CLEAR'}" ng-click="loadEmailsFor(account, stat.status)">
+					<div style="cursor:pointer" ng-class="{'tile-stats tile_grey' : stat.status == 'UNKNOWN', 'tile-stats tile_alert' : stat.status == 'CERTAINLY_SPAM' || stat.status == 'PROBABLY_SPAM', 'tile-stats tile_ok' : stat.status == 'CLEAR'}" ng-click="loadEmailsFor(account, stat.status)">
 						<div class="icon">
 							<i ng-class="getIconClassFor(stat.status)" aria-hidden="true"></i>
 						</div>
@@ -44,6 +44,9 @@
 				</div>
 			</div>
 		</div>
+	<div class="row" ng-show="context.currentAccount.stats.length == 0">
+		<label>No emails to check for this account</label>
+	</div>
 	<div class="raw" ng-hide="context.tableParams == null">
 		<i ng-class="getIconClassFor(context.currentStatus)" aria-hidden="true"></i> 
 		<label>
@@ -54,12 +57,13 @@
 	<br/>
 	<div class="row" ng-hide="context.tableParams == null">
 	<div class="btn-group">
-        <label ng-click="actOnEmails('clear')" ng-show="context.currentStatus == 'CERTAINLY_SPAM' || context.currentStatus == 'UNKNOWN'" class="btn btn-success" >Clear</label>
-        <label ng-click="actOnEmails('clearadduser')" ng-show="context.currentStatus == 'CERTAINLY_SPAM' || context.currentStatus == 'UNKNOWN'" class="btn btn-success">Clear and add user to white list</label>
-        <label ng-click="actOnEmails('clearadddomain')" ng-show="context.currentStatus == 'CERTAINLY_SPAM' || context.currentStatus == 'UNKNOWN'" class="btn btn-success">Clear and add domain to white list</label>
+        <label ng-click="actOnEmails('spam')" ng-show="context.currentStatus == 'CLEAR' || context.currentStatus == 'UNKNOWN'" class="btn btn-danger" ng-model="context.buttonAction">Spam!</label>
+        <label ng-click="actOnEmails('clear')" ng-show="context.currentStatus == 'PROBABLY_SPAM' || context.currentStatus == 'UNKNOWN'" class="btn btn-success" >Clear</label>
+        <label ng-click="actOnEmails('clearadduser')" ng-show="context.currentStatus == 'PROBABLY_SPAM' || context.currentStatus == 'UNKNOWN'" class="btn btn-success">Clear and add user to white list</label>
+        <label ng-click="actOnEmails('clearadddomain')" ng-show="context.currentStatus == 'PROBABLY_SPAM' || context.currentStatus == 'UNKNOWN'" class="btn btn-success">Clear and add domain to white list</label>
         <label ng-click="actOnEmails('del')" class="btn btn-info" ng-model="context.buttonAction">Delete</label>
-        <label ng-click="actOnEmails('delbanuser')" class="btn btn-info" ng-model="context.buttonAction">Delete and add user to black list</label>
-        <label ng-click="actOnEmails('delbandomain')" class="btn btn-info" ng-model="context.buttonAction">Delete and add domain to black list</label>
+        <label ng-click="actOnEmails('delbanuser')" class="btn btn-info" ng-model="context.buttonAction">Delete and ban sender</label>
+        <label ng-click="actOnEmails('delbandomain')" class="btn btn-info" ng-model="context.buttonAction">Delete and ban domain</label>
     </div>
     </div>
 	<div class="row" ng-hide="context.tableParams == null">
@@ -67,12 +71,12 @@
 		nnnng-table-columns-binding="cols"
 		ng-class="{
 		'table table-condensed table-bordered table-hover ntable-striped-grey' : context.currentStatus == 'UNKNOWN', 
-		'table table-condensed table-bordered table-hover ntable-striped-alert' : context.currentStatus == 'CERTAINLY_SPAM', 
+		'table table-condensed table-bordered table-hover ntable-striped-alert' : context.currentStatus == 'PROBABLY_SPAM', 
 		'table table-condensed table-bordered table-hover ntable-striped-ok' : context.currentStatus == 'CLEAR'
 		}" show-filter="false">
 			<tr ng-repeat="email in $data" style="cursor:pointer;">
 				<td title="'##'" ng-if="false" filter="{display: 'text'}">
-				{{email.display}}
+					{{email.display}}
 				</td>
 				<td title="'#'" ng-if="true">
 					<input name="selectEmails" type="checkbox" ng-model="email.selected">
@@ -83,7 +87,7 @@
 				<td title="'From'" sortable="'headerFrom'" ng-if="true">
 					{{display(email.headerFrom)}}
 				</td>
-				<td title="'Subject'" sortable="'subject'" ng-if="true">
+				<td title="'Subject'" sortable="'subject'" ng-if="true" ng-click="getInfoFor(email)">
 				{{display(email.subject)}}
 				</td>
 			</tr>

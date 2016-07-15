@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.telaside.mailkiller.checker.EmailCheckerPriority;
+
 @Entity
 @Table(name="email_checker_result")
 public class EmailCheckerResult {
@@ -32,8 +34,9 @@ public class EmailCheckerResult {
     @Column(name = "chk_checker_name", length = 255)
 	private String checker;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "chk_checker_priority")
-	private int priority;
+	private EmailCheckerPriority priority;
 	
 	public Long getId() {
 		return id;
@@ -65,10 +68,10 @@ public class EmailCheckerResult {
 	public void setChecker(String checker) {
 		this.checker = checker;
 	}
-	public int getPriority() {
+	public EmailCheckerPriority getPriority() {
 		return priority;
 	}
-	public void setPriority(int priority) {
+	public void setPriority(EmailCheckerPriority priority) {
 		this.priority = priority;
 	}
 }

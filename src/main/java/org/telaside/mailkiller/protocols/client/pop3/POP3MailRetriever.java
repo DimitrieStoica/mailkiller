@@ -11,7 +11,11 @@ import static org.telaside.mailkiller.domain.MailHeaderPrefix.H_SUBJECT_LENGTH;
 
 import java.io.BufferedReader;
 import java.io.CharArrayWriter;
+import java.io.IOException;
 import java.io.Reader;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.net.pop3.POP3Client;
 import org.apache.commons.net.pop3.POP3MessageInfo;
@@ -32,18 +36,15 @@ public class POP3MailRetriever implements EmailRetriever {
 	@Autowired
 	private EmailReceivedService emailService;
 	
-    public void retrieveMailsFor(EmailAccount emailAccount) {
+    public List<EmailReceived> retrieveMailsFor(EmailAccount emailAccount) {
+		List<EmailReceived> newEmails = new ArrayList<EmailReceived>();
     	try {
     		int totalNew = 0;
-	    	LOG.info("Retrieve emails");
-	    	POP3Client pop3Client = new POP3Client();
-	    	LOG.info("Login into pop3 server");
-	    	pop3Client.connect(emailAccount.getRemoteServer());
-	    	pop3Client.login(emailAccount.getLogin(), emailAccount.getPassword());
-	    	LOG.info("connected...");
+	    	POP3Client pop3Client = pop3ConnectAndLogin(emailAccount);
+	    	
 	    	POP3MessageInfo[] messageInfos = pop3Client.listMessages();
 	    	if(messageInfos != null) {
-	    		LOG.info("{} email(s) present in pop3 server {}", messageInfos.length, emailAccount.getRemoteServer());
+	    		LOG.info("{} email(s) present in POP3 {}/{}", messageInfos.length, emailAccount.getLogin(), emailAccount.getRemoteServer());
 		    	for(POP3MessageInfo messageInfo : messageInfos) {
 		    		Reader message = pop3Client.retrieveMessageTop(messageInfo.number, 0);
 		    		if(message != null) {
@@ -57,17 +58,29 @@ public class POP3MailRetriever implements EmailRetriever {
 			    			receivedMessage = retrieveMessage(message);
 			    			receivedMessage.assignReceivedFields(emailAccount);
 			    			if(emailService.saveIfNew(receivedMessage)) {
+			    				newEmails.add(receivedMessage);
 			    				totalNew++;
 			    			}
 			    		}
 		    		}
 		    	}
-		    	LOG.info("Total new email(s) is {} for {}", totalNew, emailAccount.getRemoteServer());
+		    	LOG.info("Total new email(s) {} for {}/{}", totalNew, emailAccount.getLogin(), emailAccount.getRemoteServer());
 	    	}
     	} catch(Exception e) {
     		LOG.error("Error while retrieving emails", e);
     	}
+    	return newEmails;
     }
+
+	private POP3Client pop3ConnectAndLogin(EmailAccount emailAccount) throws SocketException, IOException {
+		LOG.info("Retrieving emails for {}/{}", emailAccount.getLogin(), emailAccount.getRemoteServer());
+		POP3Client pop3Client = new POP3Client();
+		LOG.info("Login into pop3 server {}", emailAccount.getRemoteServer());
+		pop3Client.connect(emailAccount.getRemoteServer());
+		pop3Client.login(emailAccount.getLogin(), emailAccount.getPassword());
+		LOG.info("Connected with {}...", emailAccount.getLogin());
+		return pop3Client;
+	}
 
 	private EmailReceived retrieveMessage(Reader message) throws Exception {
 		char messageChar[] = new char[16384];

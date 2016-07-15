@@ -4,6 +4,10 @@ angular.module('emailKiller',  ['emailServices', 'ngTable', 'ngRoute', 'ui.boots
         controller: homeController,
         templateUrl: 'assets/templates/home.html'
     });
+    $routeProvider.when('/spam', {
+        controller: homeController,
+        templateUrl: 'assets/templates/home.html'
+    });
     $routeProvider.when('/', {
         controller: homeController,
         templateUrl: 'assets/templates/home.html'

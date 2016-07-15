@@ -30,6 +30,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile("org.springframework.boot:spring-boot-starter-security")
 	compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+	compile("org.springframework.boot:spring-boot-starter-integration")
 	
 	compile group: 'org.webjars', name: 'angularjs', version: '1.5.7'
 	compile group: 'org.webjars', name: 'bootstrap', version: '3.3.6'
@@ -38,6 +39,8 @@ dependencies {
 	compile group: 'org.webjars', name: 'ui-grid', version: '3.1.1'
 	compile group: 'org.webjars', name: 'spin-js', version: '2.1.0'
 	compile group: 'javax.mail', name: 'mail', version: '1.4.7'
+	
+	compile 'com.lmax:disruptor:3.2.1'
 	
 	runtime('mysql:mysql-connector-java')
 	compile('org.springframework.session:spring-session')

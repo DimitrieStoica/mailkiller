@@ -8,12 +8,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.telaside.mailkiller.checker.EmailChecker;
 import org.telaside.mailkiller.checker.EmailCheckerDiagnostic;
 import org.telaside.mailkiller.domain.EmailCheckerResult;
-import org.telaside.mailkiller.domain.EmailCheckerResultRepository;
 import org.telaside.mailkiller.domain.EmailReceived;
+import org.telaside.mailkiller.domain.repository.EmailCheckerResultRepository;
 
 @Service
 @Transactional
 public class EmailDiagnosticService {
+	
 	static private final Logger LOG = LoggerFactory.getLogger(EmailDiagnosticService.class);
 	
 	@Autowired
@@ -21,9 +22,11 @@ public class EmailDiagnosticService {
 	
 	public EmailCheckerResult newEmailCheckerResult(EmailReceived email, EmailChecker checker, EmailCheckerDiagnostic diagnostic) {
 		EmailCheckerResult emailCheckerResult = new EmailCheckerResult();
-		emailCheckerResult.setChecker(checker.checkerName());
+		emailCheckerResult.setChecker(checker.name());
 		emailCheckerResult.setPriority(checker.priority());
 		emailCheckerResult.setDiagnostic(diagnostic.diagnostic());
+		emailCheckerResult.setEmailChecked(email);
+		LOG.debug("Saving {}", emailCheckerResult);
 		return emailCheckerResultRepository.save(emailCheckerResult);
 	}
 }

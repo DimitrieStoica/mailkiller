@@ -1,18 +1,34 @@
 angular.module('emailServices', ['toaster', 'ngAnimate', 'ngResource', 'ngTable'])
     .factory('globalStats', function ($resource) {
-        return $resource('mailstat/globalstats');
+        return $resource('mailstat/:type/globalstats');
     })
     .factory('getStatsFor', function ($resource) {
-        return $resource('mailstat/:account/stats');
+        return $resource('mailstat/:type/:account/stats');
     })
     .factory('getEmailsFor', function ($resource) {
-        return $resource('emailsfor/:account/status/:status');
+        return $resource('emailsfor/:account/checkerstatus/:status');
+    })
+    .factory('getEmailInfo', function ($resource) {
+        return $resource('/email/:emailid/checkerresult');
     })
     .factory('actOnEmails', function ($resource) {
         return $resource('actonemails/:action');
     })
 
-function homeController($scope, $interval, toaster, $timeout, $routeParams, NgTableParams, globalStats, getEmailsFor, getStatsFor, actOnEmails) {
+function homeController($scope, 
+		$interval, toaster, $timeout, $location,
+		$routeParams, NgTableParams, 
+		globalStats, getEmailsFor, getStatsFor, actOnEmails, getEmailInfo) {
+	
+	function getType() {
+		console.log("location is", $location.path())
+		type = "nospam"
+		if($location.path().endsWith("spam")) {
+			type = "spam"
+		}
+		console.log("type is", type, " for", $location.path())
+		return type;
+	}
 	
 	currentTabScopes = [];
 	currentTabScope = 0
@@ -22,21 +38,33 @@ function homeController($scope, $interval, toaster, $timeout, $routeParams, NgTa
 		return date.format()
 	}
 	
+	$scope.getInfoFor = function(email) {
+		console.log("getting info for", email);
+		getEmailInfo.get({emailid:email.internalMessageId})
+			.$promise.then(function (result) {
+				console.log(result)
+				toaster.pop('success', '', result.diagnostic)
+			}, function(error) {
+				console.log(error)
+				toaster.pop('error', '', error.toString())
+			});
+	}
+	
 	$scope.selectTab = function(account) {
-		console.log("Selecting tab", account)
-		//$scope.success = false;
 		currentTabScope = account;
 		if(currentTabScopes[account] == null) {
 			currentTabScopes[account] = [];
 		}
 		$scope.context = currentTabScopes[account];
 		$scope.context.currentAccount = $scope.stats.statsPerAccounts[account]
+		console.log("Selected tab", account, " context is now", $scope.context)
+
 	}
 	
 	function reloadStats(account) {
-		getStatsFor.query({account:account})
+		getStatsFor.query({type:getType(), account:account})
 			.$promise.then(function (result) {
-				console.log(result)
+				//console.log(result)
 				for(var index = 0; index < $scope.stats.statsPerAccounts.length; index++) {
 					if($scope.stats.statsPerAccounts[index].accountName == account) {
 						$scope.stats.statsPerAccounts[index].stats = result;
@@ -96,12 +124,15 @@ function homeController($scope, $interval, toaster, $timeout, $routeParams, NgTa
     	}
     	return '??'
     }
+    
+    $scope.getType = function() {
+    	getType()
+    }
 
     $scope.init = function() {
     	$scope.loadingStats = true;
-    	//$scope.context.tableParams = null
-		//var globalStatsService = globalStats.get();
-		globalStats.get().$promise.then(function (result) {
+    	console.log("init called", $location.path())
+ 		globalStats.get({ type : getType() }).$promise.then(function (result) {
 	    	console.log("loaded data:", result)
 	        $scope.stats = result;
 	    	$scope.loadingStats = false;

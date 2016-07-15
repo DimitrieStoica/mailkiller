@@ -20,6 +20,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
 @Entity
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="acc_type")
@@ -31,6 +33,10 @@ public abstract class EmailAccount {
     @GeneratedValue
     @Column(name = "id", columnDefinition = "bigint unsigned")
 	private Long id;
+	
+	@Column(name="valid")
+	@Type(type="true_false")
+	private boolean isValid;
 	
 	@ManyToOne(fetch=EAGER)
 	@JoinColumn(name="user_id")
@@ -58,6 +64,12 @@ public abstract class EmailAccount {
 		this.id = id;
 	}
 	
+	public boolean isValid() {
+		return isValid;
+	}
+	public void setValid(boolean isValid) {
+		this.isValid = isValid;
+	}
 	public List<EmailReceived> getEmails() {
 		return emails;
 	}

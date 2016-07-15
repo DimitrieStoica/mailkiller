@@ -3,16 +3,12 @@ spring:
     url: "jdbc:mysql://localhost/emailkiller"
     username: emailkiller
     password: emailkiller
-    driver-class-name: com.mysql.jdbc.Driver
+#    driver-class-name: com.mysql.jdbc.Driver
 #    initialize: true
 #    data: classpath:sample-data.sql
-  jpa:
-    hibernate:
-      ddl-auto: update
-      show-sql: true
-  show-sql: true
-# create-drop
-# update
+#  jpa:
+#    hibernate:   
+#      ddl-auto: create-drop
 
 ---
 

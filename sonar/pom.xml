@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.oracle</groupId>
+  <artifactId>petstore</artifactId>
+  <version>1.0</version>
+
+  <name>Oracle petstore application migration analysis</name>
+
+  <properties>
+	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<sonar.language>java</sonar.language>
+	<sonar.log.level>info</sonar.log.level>
+	<sonar.sources>petstore.src/</sonar.sources>
+	<sonar.binaries>binaries</sonar.binaries>
+  </properties>
+<build>
+  <pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </pluginManagement>
+</build>
+
+</project>

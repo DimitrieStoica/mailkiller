@@ -1,0 +1,53 @@
+[15:56:18.798] ERROR - with analyzer 'org.springframework.migrationanalyzer.contributions.bytecode.DelegatingByteCodeEntryAnalyzer': jav
+a.lang.ArrayIndexOutOfBoundsException: 61696
+        at org.objectweb.asm.ClassReader.readClass(Unknown Source)
+        at org.objectweb.asm.ClassReader.getClassName(Unknown Source)
+        at org.springframework.migrationanalyzer.contributions.bytecode.DelegatingByteCodeEntryAnalyzer$1.perform(Delega
+tingByteCodeEntryAnalyzer.java:71)
+        at org.springframework.migrationanalyzer.contributions.bytecode.DelegatingByteCodeEntryAnalyzer$1.perform(Delega
+tingByteCodeEntryAnalyzer.java:63)
+        at org.springframework.migrationanalyzer.analyze.fs.support.FileFileSystemEntry.doWithInputStream(FileFileSystem
+Entry.java:52)
+        at org.springframework.migrationanalyzer.contributions.bytecode.DelegatingByteCodeEntryAnalyzer.analyze(Delegati
+ngByteCodeEntryAnalyzer.java:63)
+        at org.springframework.migrationanalyzer.analyze.support.StandardAnalysisEngine.analyze(StandardAnalysisEngine.j
+ava:62)
+        at org.springframework.migrationanalyzer.commandline.CommandLineMigrationAnalysisExecutor.analyzeArchive(Command
+LineMigrationAnalysisExecutor.java:116)
+        at org.springframework.migrationanalyzer.commandline.CommandLineMigrationAnalysisExecutor.execute(CommandLineMig
+rationAnalysisExecutor.java:100)
+        at org.springframework.migrationanalyzer.commandline.AbstractMigrationAnalysis.run(AbstractMigrationAnalysis.jav
+a:79)
+        at org.springframework.migrationanalyzer.commandline.MigrationAnalysis.main(MigrationAnalysis.java:38)
+
+[15:56:18.813] ERROR - org.apache.bcel.classfile.ClassFormatException: Invalid byte tag in constant pool: 18
+[15:56:18.813] ERROR - org.apache.bcel.classfile.ClassFormatException: Invalid byte tag in constant pool: 18
+[15:56:20.139] ERROR - analyzer 'org.springframework.migrationanalyzer.contributions.bytecode.Del
+egatingByteCodeEntryAnalyzer': java.lang.ArrayIndexOutOfBoundsException: 10768
+        at org.objectweb.asm.ClassReader.<init>(Unknown Source)
+        at org.objectweb.asm.ClassReader.<init>(Unknown Source)
+        at org.objectweb.asm.ClassReader.<init>(Unknown Source)
+        at org.springframework.migrationanalyzer.contributions.bytecode.DelegatingByteCodeEntryAnalyzer$1.perform(Delega
+tingByteCodeEntryAnalyzer.java:69)
+        at org.springframework.migrationanalyzer.contributions.bytecode.DelegatingByteCodeEntryAnalyzer$1.perform(Delega
+tingByteCodeEntryAnalyzer.java:63)
+        at org.springframework.migrationanalyzer.analyze.fs.support.FileFileSystemEntry.doWithInputStream(FileFileSystem
+Entry.java:52)
+        at org.springframework.migrationanalyzer.contributions.bytecode.DelegatingByteCodeEntryAnalyzer.analyze(Delegati
+ngByteCodeEntryAnalyzer.java:63)
+        at org.springframework.migrationanalyzer.analyze.support.StandardAnalysisEngine.analyze(StandardAnalysisEngine.j
+ava:62)
+        at org.springframework.migrationanalyzer.commandline.CommandLineMigrationAnalysisExecutor.analyzeArchive(Command
+LineMigrationAnalysisExecutor.java:116)
+        at org.springframework.migrationanalyzer.commandline.CommandLineMigrationAnalysisExecutor.execute(CommandLineMig
+rationAnalysisExecutor.java:100)
+        at org.springframework.migrationanalyzer.commandline.AbstractMigrationAnalysis.run(AbstractMigrationAnalysis.jav
+a:79)
+        at org.springframework.migrationanalyzer.commandline.MigrationAnalysis.main(MigrationAnalysis.java:38)
+
+[15:56:20.155] ERROR - org.apache.bcel.classfile.ClassFormatException: Invalid byte tag in constant pool: 18
+[15:56:20.171] ERROR - org.apache.bcel.classfile.ClassFormatException: Invalid byte tag in constant pool: 18
+
+97416 [main] DEBUG freemarker.cache  - "org/springframework/migrationanalyzer/render/support/html/html-by-file-footer.ft
+l"["en_GB",Cp1252,parsed]  cached copy not yet stale; using cached.
+
